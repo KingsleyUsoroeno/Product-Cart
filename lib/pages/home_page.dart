@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/pages/manage_products.dart';
+import 'package:flutter_course/product.dart';
 
-import '../product_manager.dart';
+import '../productPojo.dart';
 
 class HomePage extends StatelessWidget {
+  final List<ProductPojo> products;
+  final Function deleteProduct;
+
+  HomePage(this.products, this.deleteProduct);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,13 +21,9 @@ class HomePage extends StatelessWidget {
                 title: Text('Choose'),
               ),
               ListTile(
-                title: Text('Manage Products'),
-                onTap: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            ManageProductPage())),
-              )
+                  title: Text('Manage Products'),
+                  onTap: () =>
+                      Navigator.pushReplacementNamed(context, "/manageProduct"))
             ],
           ),
         ),
@@ -30,10 +31,9 @@ class HomePage extends StatelessWidget {
           title: Text('EasyList'),
           elevation: 9.0,
         ),
-        body: Column(
-          children: <Widget>[
-            ProductManager("Food Tester"),
-          ],
+        body: ProductsList(
+          products,
+          deleteProduct: deleteProduct,
         ));
   }
 }

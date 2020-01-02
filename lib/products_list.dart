@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/pages/product.dart';
+import 'package:flutter_course/productPojo.dart';
 
 class ProductsList extends StatelessWidget {
-  final List<String> _products;
+  final List<ProductPojo> _products;
   final Function deleteProduct;
 
   ProductsList(this._products, {this.deleteProduct});
@@ -19,18 +19,16 @@ class ProductsList extends StatelessWidget {
               return Card(
                 child: Column(
                   children: <Widget>[
-                    Image.asset('assets/images/food.jpg'),
-                    Text(_products[pos]),
+                    Image.asset(_products[pos].productImage),
+                    Text(_products[pos].productName),
                     ButtonBar(
                       alignment: MainAxisAlignment.center,
                       children: <Widget>[
                         FlatButton(
-                          onPressed: () => Navigator.push<bool>(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => ProductPage(
-                                    _products[pos], 'assets/images/food.jpg'),
-                              )).then((value) {
+                          onPressed: () => Navigator.pushNamed<bool>(
+                                  context, "/products",
+                                  arguments: _products[pos])
+                              .then((bool value) {
                             if (value == false) {
                               return;
                             }
