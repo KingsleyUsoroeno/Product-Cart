@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/product.dart';
+import 'package:flutter_course/products_list.dart';
 
 import '../productPojo.dart';
 

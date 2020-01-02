@@ -1,51 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/product.dart';
-import 'package:flutter_course/product_control.dart';
+import 'package:flutter_course/productPojo.dart';
+import 'package:flutter_course/products_list.dart';
 
-class ProductManager extends StatefulWidget {
-  final String _startingProduct;
+class ProductManager extends StatelessWidget {
+    final Function _deleteProduct;
+    final List<ProductPojo> _products;
 
-  ProductManager(this._startingProduct);
-
-  @override
-  State<StatefulWidget> createState() {
-    return new ProductManagerState();
-  }
-}
-
-class ProductManagerState extends State<ProductManager> {
-  final List<String> _products = [];
-
-  void _addProduct(String product) {
-    setState(() {
-      _products.add(product);
-    });
-  }
-
-  void _deleteProduct(int position) {
-    setState(() {
-      _products.removeAt(position);
-    });
-  }
-
-  @override
-  void initState() {
-    _products.add(widget._startingProduct); // Food Tester
-    super.initState();
-  }
+    ProductManager(this._products, this._deleteProduct);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: <Widget>[
-          Container(
-              margin: EdgeInsets.all(10.0), child: ProductControl(_addProduct)),
-          Expanded(
-            child: ProductsList(_products, deleteProduct: _deleteProduct),
-          )
-        ],
-      ),
-    );
+      return ProductsList(_products, deleteProduct: _deleteProduct);
   }
 }

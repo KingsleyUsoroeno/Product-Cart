@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/productPojo.dart';
 
 class ProductPage extends StatelessWidget {
-  final String _title;
-  final String _imageUrl;
+  final ProductPojo _product;
 
-  ProductPage(this._title, this._imageUrl);
+  ProductPage(this._product);
+
+  void _showWarningDialog(BuildContext context) {
+    showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Are you sure'),
+                content: Text('These Action cannot be undone'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('DELETE'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                  FlatButton(
+                          child: Text('DISMISS'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                ],
+              );
+            });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +42,17 @@ class ProductPage extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: Text(_title),
+            title: Text(_product.productName),
           ),
           body: Column(
             children: <Widget>[
-              Image.asset(_imageUrl),
+              Image.asset(_product.productImage),
               Container(
                 margin: EdgeInsets.only(top: 10.0),
-                child: Text(_title),
+                child: Text(_product.productDesc),
               ),
               RaisedButton(
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () => _showWarningDialog(context),
                 child: Text('Delete'),
                 color: Theme.of(context).accentColor,
                 textColor: Colors.white,

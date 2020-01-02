@@ -9,12 +9,12 @@ class ProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _products.length == 0
+    return _products != null && _products.length == 0
         ? Center(
             child: Text('Click the button to add a random cart to the list'),
           )
         : ListView.builder(
-            itemCount: _products.length,
+            itemCount: _products != null ? _products.length : 0,
             itemBuilder: (BuildContext context, int pos) {
               return Card(
                 child: Column(

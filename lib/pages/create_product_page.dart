@@ -23,11 +23,9 @@ class ProductCreateState extends State<ProductCreatePage> {
         });
   }
 
-  String _productName = '';
-  String _productDesc = '';
-  double price;
-
-  TextEditingController _productNameController = TextEditingController();
+  String _productName;
+  String _productDesc;
+  double _price;
 
   // TODO create a custom textInput Widget that can be reUsed
   @override
@@ -59,7 +57,7 @@ class ProductCreateState extends State<ProductCreatePage> {
               keyboardType: TextInputType.number,
               onChanged: (String val) {
                 setState(() {
-                  price = double.parse(val);
+                  _price = double.parse(val);
                 });
               },
             ),
@@ -70,15 +68,15 @@ class ProductCreateState extends State<ProductCreatePage> {
                 color: Theme.of(context).primaryColor,
                 child: Text('Save Product'),
                 onPressed: () {
-                  if (_productName.isNotEmpty ||
-                      _productDesc.isNotEmpty ||
-                      price != 0.0) {
-
-                    ProductPojo product = ProductPojo(_productName,
-                        _productDesc, "assets/images/food.jpg", price);
-                    widget._addProduct(product);
-                    //Navigator.pushReplacementNamed(context, "/manageProduct");
+                  if (_productName == null && _productDesc == null) {
+                    return;
                   }
+
+                  ProductPojo product = ProductPojo(_productName, _productDesc,
+                          "assets/images/food.jpg", _price);
+                  print('Product to be added is ${product.toString()}');
+                  widget._addProduct(product);
+                  Navigator.pushReplacementNamed(context, "/home");
                 },
               ),
             )
