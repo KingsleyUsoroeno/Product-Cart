@@ -46,7 +46,10 @@ class ProductPage extends StatelessWidget {
           ),
           body: Column(
             children: <Widget>[
+              /*Our Products Image*/
               Image.asset(_product.productImage),
+
+              /*Our Product Description embedded into a Container Widget*/
               Container(
                 margin: EdgeInsets.only(top: 10.0),
                 child: Text(_product.productDesc),

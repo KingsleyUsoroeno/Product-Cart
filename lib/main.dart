@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course/pages/auth_page.dart';
 import 'package:flutter_course/pages/home_page.dart';
 import 'package:flutter_course/pages/manage_products.dart';
-import 'package:flutter_course/pages/product.dart';
+import 'package:flutter_course/pages/product_detail.dart';
 import 'package:flutter_course/productPojo.dart';
 
 main() => runApp(MyApp());
@@ -34,34 +34,33 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData(
-                brightness: Brightness.light,
+            brightness: Brightness.light,
             primarySwatch: Colors.deepPurple,
-            accentColor: Colors.deepPurpleAccent),
+            accentColor: Colors.deepPurpleAccent,),
         routes: {
           '/home': (BuildContext context) =>
-                  HomePage(_products, _deleteProduct),
+              HomePage(_products, _deleteProduct),
           '/manageProduct': (BuildContext context) =>
-                  ManageProductPage(_addProduct),
+              ManageProductPage(_addProduct),
         },
-            // ignore: missing_return
-            onGenerateRoute: (RouteSettings settings) {
-              switch (settings.name) {
-                case "/products":
-                  var data = settings.arguments as ProductPojo;
-                  if (data != null) {
-                    return MaterialPageRoute<bool>(
-                            builder: (BuildContext context) => ProductPage(data));
-                  }
-                  break;
-                default:
-                  return MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                                  Scaffold(
-                                    body: Center(
-                                      child: Text('No route defined for ${settings.name}'),
-                                    ),
-                                  ));
+        // ignore: missing_return
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case "/products":
+              var data = settings.arguments as ProductPojo;
+              if (data != null) {
+                return MaterialPageRoute<bool>(
+                    builder: (BuildContext context) => ProductPage(data));
               }
+              break;
+            default:
+              return MaterialPageRoute(
+                  builder: (BuildContext context) => Scaffold(
+                        body: Center(
+                          child: Text('No route defined for ${settings.name}'),
+                        ),
+                      ));
+          }
         },
         home: AuthPage());
   }

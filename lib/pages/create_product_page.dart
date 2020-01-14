@@ -23,6 +23,54 @@ class ProductCreateState extends State<ProductCreatePage> {
         });
   }
 
+  Widget _buildTitleTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Product Name'),
+      onChanged: (String val) {
+        setState(() {
+          _productName = val;
+        });
+      },
+    );
+  }
+
+  Widget _buildDescTextField() {
+    return TextField(
+      maxLines: 3,
+      decoration: InputDecoration(labelText: 'Product Description'),
+      keyboardType: TextInputType.multiline,
+      onChanged: (String val) {
+        setState(() {
+          _productDesc = val;
+        });
+      },
+    );
+  }
+
+  Widget _buildPriceTextField() {
+    return TextField(
+      decoration: InputDecoration(labelText: 'Price'),
+      keyboardType: TextInputType.number,
+      onChanged: (String val) {
+        setState(() {
+          _price = double.parse(val);
+        });
+      },
+    );
+  }
+
+  void _createProduct() {
+    if (_productName == null && _productDesc == null) {
+      return;
+    }
+
+    ProductPojo product = ProductPojo(
+        _productName, _productDesc, "assets/images/food.jpg", _price);
+    print('Product to be added is ${product.toString()}');
+    widget._addProduct(product);
+    Navigator.pushReplacementNamed(context, "/home");
+  }
+
   String _productName;
   String _productDesc;
   double _price;
@@ -34,50 +82,16 @@ class ProductCreateState extends State<ProductCreatePage> {
         margin: EdgeInsets.all(12.0),
         child: ListView(
           children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Product Name'),
-              onChanged: (String val) {
-                setState(() {
-                  _productName = val;
-                });
-              },
-            ),
-            TextField(
-              maxLines: 3,
-              decoration: InputDecoration(labelText: 'Product Description'),
-              keyboardType: TextInputType.multiline,
-              onChanged: (String val) {
-                setState(() {
-                  _productDesc = val;
-                });
-              },
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Price'),
-              keyboardType: TextInputType.number,
-              onChanged: (String val) {
-                setState(() {
-                  _price = double.parse(val);
-                });
-              },
-            ),
+            _buildTitleTextField(),
+            _buildDescTextField(),
+            _buildPriceTextField(),
             Container(
               margin: EdgeInsets.only(top: 15.0),
               child: RaisedButton(
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
                 child: Text('Save Product'),
-                onPressed: () {
-                  if (_productName == null && _productDesc == null) {
-                    return;
-                  }
-
-                  ProductPojo product = ProductPojo(_productName, _productDesc,
-                          "assets/images/food.jpg", _price);
-                  print('Product to be added is ${product.toString()}');
-                  widget._addProduct(product);
-                  Navigator.pushReplacementNamed(context, "/home");
-                },
+                onPressed: () => _createProduct(),
               ),
             )
           ],
