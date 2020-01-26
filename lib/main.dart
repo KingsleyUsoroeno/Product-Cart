@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course/pages/auth_page.dart';
 import 'package:flutter_course/pages/home_page.dart';
 import 'package:flutter_course/pages/manage_products.dart';
+import 'package:flutter_course/pages/onboarding.dart';
 import 'package:flutter_course/pages/product_detail.dart';
 import 'package:flutter_course/productPojo.dart';
 
@@ -53,6 +54,7 @@ class MyAppState extends State<MyApp> {
               HomePage(_products, _deleteProduct),
           '/manageProduct': (BuildContext context) =>
               ManageProductPage(_addProduct, updateProduct, _products),
+          '/auth': (BuildContext context) => AuthPage()
         },
         // ignore: missing_return
         onGenerateRoute: (RouteSettings settings) {
@@ -73,6 +75,6 @@ class MyAppState extends State<MyApp> {
                       ));
           }
         },
-        home: AuthPage());
+        home: OnBoarding());
   }
 }

@@ -21,7 +21,9 @@ Widget _buildProductListView(List<ProductPojo> products,
       itemBuilder: (BuildContext context, int position) {
         return ListTile(
           title: Text(products[position].productName),
-          leading: Image.asset(products[position].productImage),
+          leading: CircleAvatar(
+            backgroundImage: AssetImage(products[position].productImage),
+            radius: 30.0,),
           subtitle: Text(products[position].productDesc),
           contentPadding: EdgeInsets.all(8.0),
           trailing: IconButton(
