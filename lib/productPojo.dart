@@ -15,9 +15,26 @@ class ProductPojo {
 
   String get productName => _productName;
 
+
+  set productName(String value) {
+    _productName = value;
+  }
+
   @override
   String toString() {
     return 'ProductPojo{_productName: $_productName, _productDesc: $_productDesc, '
         '_productImage: $_productImage, _productPrice: $_productPrice}';
+  }
+
+  set productDesc(String value) {
+    _productDesc = value;
+  }
+
+  set productImage(String value) {
+    _productImage = value;
+  }
+
+  set productPrice(double value) {
+    _productPrice = value;
   }
 }

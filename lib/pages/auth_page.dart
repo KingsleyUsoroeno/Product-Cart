@@ -12,8 +12,42 @@ class _AuthPageState extends State<AuthPage> {
   String _password = '';
   bool _acceptTerms = false;
 
+  Widget _buildEmailTextInput() {
+    return TextField(
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+          labelText: 'Email', fillColor: Colors.white, filled: true),
+      onChanged: (String val) {
+        setState(() {
+          _email = val;
+        });
+      },
+    );
+  }
+
+  Widget _buildPasswordTextInput() {
+    return TextField(
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+          labelText: 'Password', filled: true, fillColor: Colors.white),
+      textInputAction: TextInputAction.done,
+      obscureText: true,
+      onChanged: (String val) {
+        setState(() {
+          _password = val;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Login'),
@@ -30,47 +64,34 @@ class _AuthPageState extends State<AuthPage> {
             padding: EdgeInsets.all(12.0),
             child: Center(
               child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(labelText: 'Email', fillColor: Colors.white, filled: true),
-                      onChanged: (String val) {
-                        setState(() {
-                          _email = val;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 18.0,),
-                    TextField(
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white),
-                      textInputAction: TextInputAction.done,
-                      obscureText: true,
-                      onChanged: (String val) {
-                        setState(() {
-                          _password = val;
-                        });
-                      },
-                    ),
-                    SwitchListTile(
-                      value: _acceptTerms,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _acceptTerms = value;
-                        });
-                      },
-                      title: Text('Accept Terms'),
-                    ),
-                    SizedBox(height: 20.0),
-                    RaisedButton(
-                      textColor: Colors.white,
-                      color: Theme.of(context).accentColor,
-                      child: Text('Login'),
-                      onPressed: () =>
-                          Navigator.pushReplacementNamed(context, '/home'),
-                    )
-                  ],
+                child: Container(
+                  width: targetWidth,
+                  child: Column(
+                    children: <Widget>[
+                      _buildEmailTextInput(),
+                      SizedBox(height: 18.0,),
+                      _buildPasswordTextInput(),
+                      SwitchListTile(
+                        value: _acceptTerms,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _acceptTerms = value;
+                          });
+                        },
+                        title: Text('Accept Terms'),
+                      ),
+                      SizedBox(height: 20.0),
+                      RaisedButton(
+                        textColor: Colors.white,
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        child: Text('Login'),
+                        onPressed: () =>
+                            Navigator.pushReplacementNamed(context, '/home'),
+                      )
+                    ],
+                  ),
                 ),
               ),
             )));

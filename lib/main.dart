@@ -24,6 +24,16 @@ class MyAppState extends State<MyApp> {
     });
   }
 
+  void updateProduct(int index, ProductPojo product) {
+    setState(() {
+      print("Product is ${_products[index]}");
+      if (_products != null) {
+        _products[index] = product;
+      }
+      print("Product is ${_products.toString()}");
+    });
+  }
+
   void _deleteProduct(int position) {
     setState(() {
       _products.removeAt(position);
@@ -34,14 +44,15 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData(
-            brightness: Brightness.light,
-            primarySwatch: Colors.deepPurple,
-            accentColor: Colors.deepPurpleAccent,),
+          brightness: Brightness.light,
+          primarySwatch: Colors.deepPurple,
+          accentColor: Colors.deepPurpleAccent,
+        ),
         routes: {
           '/home': (BuildContext context) =>
               HomePage(_products, _deleteProduct),
           '/manageProduct': (BuildContext context) =>
-              ManageProductPage(_addProduct),
+              ManageProductPage(_addProduct, updateProduct, _products),
         },
         // ignore: missing_return
         onGenerateRoute: (RouteSettings settings) {
