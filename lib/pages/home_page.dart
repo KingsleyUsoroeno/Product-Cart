@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/widget/product/products_list.dart';
 
-import '../productPojo.dart';
-
 class HomePage extends StatelessWidget {
-  final List<ProductPojo> products;
-  final Function deleteProduct;
-
-  HomePage(this.products, this.deleteProduct);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +15,13 @@ class HomePage extends StatelessWidget {
               ),
               ListTile(
                   title: Text('Manage Products'),
-                  leading: Icon(Icons.edit, color: Theme.of(context).primaryColor, size: 26.0,),
+                      leading: Icon(
+                          Icons.edit,
+                          color: Theme
+                                  .of(context)
+                                  .primaryColor,
+                          size: 26.0,
+                      ),
                   onTap: () =>
                       Navigator.pushReplacementNamed(context, "/manageProduct"))
             ],
@@ -34,13 +33,11 @@ class HomePage extends StatelessWidget {
             actions: <Widget>[
                 IconButton(
                     icon: Icon(Icons.favorite),
-                    onPressed: (){},
+                    onPressed: () {
+                    },
                 )
             ],
         ),
-        body: ProductsList(
-          products,
-          deleteProduct: deleteProduct,
-        ));
+            body: ProductsList());
   }
 }

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/productPojo.dart';
+import 'package:flutter_course/models/productPojo.dart';
+import 'package:flutter_course/scoped_models/product_scope_model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductCreateOrEditPage extends StatefulWidget {
-  final Function addProduct;
-  final Function updateProduct;
-  final ProductPojo product;
-  final int productIndex;
+    final ProductPoJo productToEdit;
 
-  ProductCreateOrEditPage(
-      {this.addProduct, this.updateProduct, this.product, this.productIndex});
+    ProductCreateOrEditPage({this.productToEdit});
 
   @override
   State<StatefulWidget> createState() {
@@ -38,7 +36,7 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
   Widget _buildTitleTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Name'),
-      initialValue: widget.product != null ? widget.product.productName : "",
+        initialValue: widget.productToEdit != null ? widget.productToEdit.productName : "",
       // ignore: missing_return
       validator: (String val) {
         if (val.trim().isEmpty) {
@@ -56,7 +54,7 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
       maxLines: 3,
       decoration: InputDecoration(labelText: 'Product Description'),
       keyboardType: TextInputType.multiline,
-      initialValue: widget.product != null ? widget.product.productDesc : "",
+        initialValue: widget.productToEdit != null ? widget.productToEdit.productDesc : "",
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
@@ -74,7 +72,7 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
       decoration: InputDecoration(labelText: 'Price'),
       keyboardType: TextInputType.number,
       initialValue:
-          widget.product != null ? widget.product.productPrice.toString() : "",
+      widget.productToEdit != null ? widget.productToEdit.productPrice.toString() : "",
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
@@ -87,67 +85,80 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
     );
   }
 
-  void _createProduct() {
+  void _createProduct(ProductModel productModel) {
     /** Form Validation*/
     if (_formKey.currentState.validate()) {
       // these simply means that if all validation logic is okay go ahead and save the inputs
       print('Saving input');
       _formKey.currentState.save();
       // only create a new product if we don't have a product to edit
-      if (widget.product == null) {
+      if (widget.productToEdit == null) {
         String productName = _formData["productName"];
         String productDes = _formData["productDesription"];
         double productPrice = _formData["productPrice"];
         String image = _formData["image"];
 
-        ProductPojo product =
-            ProductPojo(productName, productDes, image, productPrice);
-        widget.addProduct(product);
+        ProductPoJo product = ProductPoJo(
+                productName: productName,
+                productDesc: productDes,
+                productImage: image,
+                productPrice: productPrice);
+        productModel.addProduct(product);
       } else {
         String productName = _formData["productName"];
         String productDes = _formData["productDesription"];
         double productPrice = _formData["productPrice"];
         String image = _formData["image"];
 
-        ProductPojo product =
-            ProductPojo(productName, productDes, image, productPrice);
-        print("product index is ${widget.productIndex}");
-        widget.updateProduct(widget.productIndex, product);
+        ProductPoJo product = ProductPoJo(
+                productName: productName,
+                productDesc: productDes,
+                productImage: image,
+                productPrice: productPrice);
+        print("product index is ${0}");
+        productModel.updateProduct(0, product);
       }
       Navigator.pushReplacementNamed(context, "/home");
     }
   }
 
+  Widget _buildSubmitButton(ProductModel productModel) {
+      return RaisedButton(
+          textColor: Colors.white,
+          color: Theme
+                  .of(context)
+                  .primaryColor,
+          child: Text(widget.productToEdit != null ? 'Edit Product' : 'Save Product'),
+          onPressed: () => _createProduct(productModel),
+      );
+  }
+
   // TODO create a custom textInput Widget that can be reUsed
   @override
   Widget build(BuildContext context) {
-    final Widget pageContent = GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: Container(
-            margin: EdgeInsets.all(12.0),
-            child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    _buildTitleTextField(),
-                    _buildDescTextField(),
-                    _buildPriceTextField(),
-                    Container(
-                      margin: EdgeInsets.only(top: 15.0),
-                      child: RaisedButton(
-                        textColor: Colors.white,
-                        color: Theme.of(context).primaryColor,
-                        child: Text(widget.product != null
-                            ? 'Edit Product'
-                            : 'Save Product'),
-                        onPressed: () => _createProduct(),
-                      ),
-                    )
-                  ],
-                ))));
-    return widget.product == null
+      final Widget pageContent = ScopedModelDescendant<ProductModel>(
+              builder: (BuildContext context, Widget child, ProductModel model) {
+                  return GestureDetector(
+                          onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                          },
+                          child: Container(
+                                  margin: EdgeInsets.all(12.0),
+                                  child: Form(
+                                          key: _formKey,
+                                          child: ListView(
+                                              children: <Widget>[
+                                                  _buildTitleTextField(),
+                                                  _buildDescTextField(),
+                                                  _buildPriceTextField(),
+                                                  Container(
+                                                          margin: EdgeInsets.only(top: 15.0),
+                                                          child: _buildSubmitButton(model))
+                                              ],
+                                          ))));
+              });
+
+      return widget.productToEdit == null
         ? pageContent
         : Scaffold(
             appBar: AppBar(

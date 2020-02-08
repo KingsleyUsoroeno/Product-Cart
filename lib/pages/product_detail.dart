@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/productPojo.dart';
+import 'package:flutter_course/models/productPojo.dart';
 
 class ProductPage extends StatelessWidget {
-  final ProductPojo _product;
+  final ProductPoJo _product;
 
   ProductPage(this._product);
 

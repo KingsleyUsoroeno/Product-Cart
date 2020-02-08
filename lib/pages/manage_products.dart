@@ -2,15 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course/pages/create_or_edit_product_page.dart';
 import 'package:flutter_course/pages/my_products_page.dart';
 
-import '../productPojo.dart';
-
 class ManageProductPage extends StatelessWidget {
-  final Function _addProduct;
-  final Function updateProduct;
-  final List<ProductPojo> _products;
-
-  ManageProductPage(this._addProduct, this.updateProduct, this._products);
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -52,11 +44,8 @@ class ManageProductPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: <Widget>[
-              ProductCreateOrEditPage(
-                addProduct: _addProduct,
-              ),
-              MyProductsPage(
-                products: _products, updateProduct: updateProduct,),
+                ProductCreateOrEditPage(),
+                MyProductsPage(),
             ],
           ),
         ));
