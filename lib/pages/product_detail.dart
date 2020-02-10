@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
+import 'package:flutter_course/scoped_models/product_scope_model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductPage extends StatelessWidget {
   final ProductPoJo _product;
@@ -33,36 +35,42 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () {
-          print("Back Button Pressed");
-          Navigator.pop(context, false);
-          return Future.value(false);
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(_product.productName),
-          ),
-          body: Column(
-            children: <Widget>[
-              /*Our Products Image*/
-              Image.asset(_product.productImage),
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, ProductModel model) {
+        return WillPopScope(
+                onWillPop: () {
+                  print("Back Button Pressed");
+                  Navigator.pop(context, false);
+                  return Future.value(false);
+                },
+                child: Scaffold(
+                  appBar: AppBar(
+                    centerTitle: true,
+                    title: Text(_product.productName),
+                  ),
+                  body: Column(
+                    children: <Widget>[
+                      /*Our Products Image*/
+                      Image.asset(_product.productImage),
 
-              /*Our Product Description embedded into a Container Widget*/
-              Container(
-                margin: EdgeInsets.only(top: 10.0),
-                child: Text(_product.productDesc),
-              ),
-              RaisedButton(
-                onPressed: () => _showWarningDialog(context),
-                child: Text('Delete'),
-                color: Theme.of(context).accentColor,
-                textColor: Colors.white,
-                elevation: 8.0,
-              )
-            ],
-          ),
-        ));
+                      /*Our Product Description embedded into a Container Widget*/
+                      Container(
+                        margin: EdgeInsets.only(top: 10.0),
+                        child: Text(_product.productDesc),
+                      ),
+                      RaisedButton(
+                        onPressed: () => _showWarningDialog(context),
+                        child: Text('Delete'),
+                        color: Theme
+                                .of(context)
+                                .accentColor,
+                        textColor: Colors.white,
+                        elevation: 8.0,
+                      )
+                    ],
+                  ),
+                ));
+      },
+    );
   }
 }

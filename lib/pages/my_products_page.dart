@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/models/productPojo.dart';
 import 'package:flutter_course/pages/create_or_edit_product_page.dart';
 import 'package:flutter_course/scoped_models/product_scope_model.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -10,35 +9,36 @@ class MyProductsPage extends StatelessWidget {
     return ScopedModelDescendant(
             builder: (BuildContext context, Widget child, ProductModel model) {
               return ListView.builder(
-                      itemCount: model.products.length != 0 ? model.products.length : 0,
+                      itemCount:
+                      model.getProducts.length != 0 ? model.getProducts.length : 0,
                       itemBuilder: (BuildContext context, int position) {
                         return Dismissible(
-                                key: Key(model.products[position].productName),
+                                key: Key(model.getProducts[position].productName),
                                 background: Container(
                                   color: Colors.deepPurpleAccent,
                                 ),
                                 onDismissed: (DismissDirection dismissDirection) {
                                   if (dismissDirection == DismissDirection.endToStart) {
                                     print("Swiped from end to Start");
-                                    model.deleteProduct(position);
+                                    model.setSelectedProductIndex(position);
+                                    model.deleteProduct();
                                   } else if (dismissDirection == DismissDirection.startToEnd) {
                                     print("Swiped from start to end");
-                                    model.deleteProduct(position);
+                                    model.deleteProduct();
                                   }
                                 },
                                 child: Column(
                                   children: <Widget>[
                                     ListTile(
-                                      title: Text(model.products[position].productName),
+                                      title: Text(model.getProducts[position].productName),
                                       leading: CircleAvatar(
-                                        backgroundImage:
-                                        AssetImage(model.products[position].productImage),
+                                        backgroundImage: AssetImage(
+                                                model.getProducts[position].productImage),
                                         radius: 30.0,
                                       ),
-                                      subtitle: Text(model.products[position].productDesc),
+                                      subtitle: Text(model.getProducts[position].productDesc),
                                       contentPadding: EdgeInsets.all(8.0),
-                                      trailing:
-                                      _buildIconButton(context, model.products[position]),
+                                      trailing: _buildIconButton(context, model, position),
                                     ),
                                     Divider()
                                   ],
@@ -48,14 +48,15 @@ class MyProductsPage extends StatelessWidget {
   }
 }
 
-Widget _buildIconButton(BuildContext context, ProductPoJo product) {
+Widget _buildIconButton(BuildContext context, ProductModel productModel, int productIndex) {
   return IconButton(
     icon: Icon(Icons.edit),
     onPressed: () {
+      productModel.setSelectedProductIndex(productIndex);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           return ProductCreateOrEditPage(
-            productToEdit: product,
+            productToEdit: productModel.getProducts[productIndex],
           );
         },
       ));

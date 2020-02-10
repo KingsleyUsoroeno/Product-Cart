@@ -4,9 +4,9 @@ import 'package:flutter_course/scoped_models/product_scope_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductCreateOrEditPage extends StatefulWidget {
-    final ProductPoJo productToEdit;
+  final ProductPoJo productToEdit;
 
-    ProductCreateOrEditPage({this.productToEdit});
+  ProductCreateOrEditPage({this.productToEdit});
 
   @override
   State<StatefulWidget> createState() {
@@ -36,7 +36,8 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
   Widget _buildTitleTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Name'),
-        initialValue: widget.productToEdit != null ? widget.productToEdit.productName : "",
+      initialValue:
+      widget.productToEdit != null ? widget.productToEdit.productName : "",
       // ignore: missing_return
       validator: (String val) {
         if (val.trim().isEmpty) {
@@ -54,7 +55,8 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
       maxLines: 3,
       decoration: InputDecoration(labelText: 'Product Description'),
       keyboardType: TextInputType.multiline,
-        initialValue: widget.productToEdit != null ? widget.productToEdit.productDesc : "",
+      initialValue:
+      widget.productToEdit != null ? widget.productToEdit.productDesc : "",
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
@@ -71,8 +73,9 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Price'),
       keyboardType: TextInputType.number,
-      initialValue:
-      widget.productToEdit != null ? widget.productToEdit.productPrice.toString() : "",
+      initialValue: widget.productToEdit != null
+              ? widget.productToEdit.productPrice.toString()
+              : "",
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
@@ -115,50 +118,51 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
                 productDesc: productDes,
                 productImage: image,
                 productPrice: productPrice);
-        print("product index is ${0}");
-        productModel.updateProduct(0, product);
+        print("product index is ${productModel.getSelectedProductIndex()}");
+        productModel.updateProduct(product);
       }
       Navigator.pushReplacementNamed(context, "/home");
     }
   }
 
   Widget _buildSubmitButton(ProductModel productModel) {
-      return RaisedButton(
-          textColor: Colors.white,
-          color: Theme
-                  .of(context)
-                  .primaryColor,
-          child: Text(widget.productToEdit != null ? 'Edit Product' : 'Save Product'),
-          onPressed: () => _createProduct(productModel),
-      );
+    return RaisedButton(
+      textColor: Colors.white,
+      color: Theme
+              .of(context)
+              .primaryColor,
+      child:
+      Text(widget.productToEdit != null ? 'Edit Product' : 'Save Product'),
+      onPressed: () => _createProduct(productModel),
+    );
   }
 
   // TODO create a custom textInput Widget that can be reUsed
   @override
   Widget build(BuildContext context) {
-      final Widget pageContent = ScopedModelDescendant<ProductModel>(
-              builder: (BuildContext context, Widget child, ProductModel model) {
-                  return GestureDetector(
-                          onTap: () {
-                              FocusScope.of(context).requestFocus(FocusNode());
-                          },
-                          child: Container(
-                                  margin: EdgeInsets.all(12.0),
-                                  child: Form(
-                                          key: _formKey,
-                                          child: ListView(
-                                              children: <Widget>[
-                                                  _buildTitleTextField(),
-                                                  _buildDescTextField(),
-                                                  _buildPriceTextField(),
-                                                  Container(
-                                                          margin: EdgeInsets.only(top: 15.0),
-                                                          child: _buildSubmitButton(model))
-                                              ],
-                                          ))));
-              });
+    final Widget pageContent = ScopedModelDescendant<ProductModel>(
+            builder: (BuildContext context, Widget child, ProductModel model) {
+              return GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                      child: Container(
+                              margin: EdgeInsets.all(12.0),
+                              child: Form(
+                                      key: _formKey,
+                                      child: ListView(
+                                        children: <Widget>[
+                                          _buildTitleTextField(),
+                                          _buildDescTextField(),
+                                          _buildPriceTextField(),
+                                          Container(
+                                                  margin: EdgeInsets.only(top: 15.0),
+                                                  child: _buildSubmitButton(model))
+                                        ],
+                                      ))));
+            });
 
-      return widget.productToEdit == null
+    return widget.productToEdit == null
         ? pageContent
         : Scaffold(
             appBar: AppBar(
