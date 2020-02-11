@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/pages/create_or_edit_product_page.dart';
-import 'package:flutter_course/scoped_models/product_scope_model.dart';
+import 'package:flutter_course/scoped_models/main_model.dart';
+import 'package:flutter_course/scoped_models/product_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class MyProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
-            builder: (BuildContext context, Widget child, ProductModel model) {
+            builder: (BuildContext context, Widget child, MainModel model) {
               return ListView.builder(
                       itemCount:
                       model.getProducts.length != 0 ? model.getProducts.length : 0,

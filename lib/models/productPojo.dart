@@ -6,17 +6,21 @@ class ProductPoJo {
     final String productImage;
     final double productPrice;
     final bool isFavourite;
+    final String userId;
+    final String userEmail;
 
   ProductPoJo(
       {@required this.productName,
       @required this.productDesc,
       @required this.productImage,
           @required this.productPrice,
-          this.isFavourite = false});
+          this.isFavourite = false,
+          @required this.userId,
+          @required this.userEmail});
 
   @override
   String toString() {
-    return 'ProductPojo{_productName: $productName, _productDesc: $productDesc, '
-            '_productImage: $productImage, _productPrice: $productPrice, isFavourite: $isFavourite}';
+      return 'ProductPoJo{productName: $productName, productDesc: $productDesc, productImage: $productImage,'
+              ' productPrice: $productPrice, isFavourite: $isFavourite, userId: $userId, userEmail: $userEmail}';
   }
 }

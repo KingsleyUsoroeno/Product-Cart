@@ -6,7 +6,7 @@ import 'package:flutter_course/pages/home_page.dart';
 import 'package:flutter_course/pages/manage_products.dart';
 import 'package:flutter_course/pages/onboarding.dart';
 import 'package:flutter_course/pages/product_detail.dart';
-import 'package:flutter_course/scoped_models/product_scope_model.dart';
+import 'package:flutter_course/scoped_models/main_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 main() => runApp(MyApp());
@@ -22,7 +22,7 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
       return ScopedModel(
-          model: ProductModel(),
+          model: MainModel(),
           child: MaterialApp(
                   debugShowCheckedModeBanner: false,
                   theme: ThemeData(

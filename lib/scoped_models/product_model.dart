@@ -1,7 +1,6 @@
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-class ProductModel extends Model {
+class ProductModel {
   List<ProductPoJo> _products = [];
   int _selectedProductIndex;
   bool _showFavourites = false;
@@ -13,20 +12,20 @@ class ProductModel extends Model {
   List<ProductPoJo> get getProductsByFavourites {
     if (_showFavourites) {
       print("Show Favourites value is $_showFavourites");
-      List<ProductPoJo> favouriteProduct = _products.where((ProductPoJo poJo) => poJo.isFavourite)
-              .toList();
+      List<ProductPoJo> favouriteProduct =
+      _products.where((ProductPoJo poJo) => poJo.isFavourite).toList();
       print("favourite product is $favouriteProduct");
       return List.from(favouriteProduct);
     } else {
       return List.from(_products);
     }
-
   }
 
-  void addProduct(ProductPoJo products) {
-    _products.add(products);
+  void addProduct(ProductPoJo productPoJo) {
+    _products.add(productPoJo);
+    print("Added product is $productPoJo");
     _selectedProductIndex = null;
-    notifyListeners();
+    //notifyListeners();
   }
 
   ProductPoJo getProduct() {
@@ -50,7 +49,7 @@ class ProductModel extends Model {
     if (_selectedProductIndex != null) {
       _products[_selectedProductIndex] = updatedProduct;
       _selectedProductIndex = null;
-      notifyListeners();
+      //notifyListeners();
     }
   }
 
@@ -61,7 +60,7 @@ class ProductModel extends Model {
         _products[_selectedProductIndex] = product;
         _selectedProductIndex = null;
         print("Updated product is ${_products.toString()}");
-        notifyListeners();
+        //notifyListeners();
       }
     }
   }
@@ -70,7 +69,7 @@ class ProductModel extends Model {
     if (_selectedProductIndex != null) {
       _products.removeAt(_selectedProductIndex);
       _selectedProductIndex = null;
-      notifyListeners();
+      //notifyListeners();
     }
   }
 
@@ -85,7 +84,7 @@ class ProductModel extends Model {
 
   void toggleFavouriteMode() {
     _showFavourites = !_showFavourites;
-    notifyListeners();
+    //notifyListeners();
   }
 
   bool get favourites {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/product_scope_model.dart';
+import 'package:flutter_course/scoped_models/main_model.dart';
+import 'package:flutter_course/scoped_models/product_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductCreateOrEditPage extends StatefulWidget {
@@ -88,7 +89,7 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
     );
   }
 
-  void _createProduct(ProductModel productModel) {
+  void _createProduct(MainModel productModel) {
     /** Form Validation*/
     if (_formKey.currentState.validate()) {
       // these simply means that if all validation logic is okay go ahead and save the inputs
@@ -100,26 +101,35 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
         String productDes = _formData["productDesription"];
         double productPrice = _formData["productPrice"];
         String image = _formData["image"];
+        String userId = productModel.getAuthenticatedUser.id;
+        String email = productModel.getAuthenticatedUser.email;
 
-        ProductPoJo product = ProductPoJo(
+        ProductPoJo newProduct = ProductPoJo(
                 productName: productName,
                 productDesc: productDes,
                 productImage: image,
-                productPrice: productPrice);
-        productModel.addProduct(product);
+                productPrice: productPrice,
+                userId: userId,
+                userEmail: email);
+        productModel.addProduct(newProduct);
       } else {
         String productName = _formData["productName"];
         String productDes = _formData["productDesription"];
         double productPrice = _formData["productPrice"];
         String image = _formData["image"];
+        String userId = productModel.getAuthenticatedUser.id;
+        String email = productModel.getAuthenticatedUser.email;
 
-        ProductPoJo product = ProductPoJo(
+        ProductPoJo updatedProduct = ProductPoJo(
                 productName: productName,
                 productDesc: productDes,
                 productImage: image,
-                productPrice: productPrice);
+                productPrice: productPrice,
+                userId: userId,
+                userEmail: email);
+
         print("product index is ${productModel.getSelectedProductIndex()}");
-        productModel.updateProduct(product);
+        productModel.updateProduct(updatedProduct);
       }
       Navigator.pushReplacementNamed(context, "/home");
     }
@@ -140,8 +150,8 @@ class ProductCreateOrEditState extends State<ProductCreateOrEditPage> {
   // TODO create a custom textInput Widget that can be reUsed
   @override
   Widget build(BuildContext context) {
-    final Widget pageContent = ScopedModelDescendant<ProductModel>(
-            builder: (BuildContext context, Widget child, ProductModel model) {
+    final Widget pageContent = ScopedModelDescendant<MainModel>(
+            builder: (BuildContext context, Widget child, MainModel model) {
               return GestureDetector(
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode());

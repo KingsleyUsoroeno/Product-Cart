@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/scoped_models/main_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -12,8 +14,6 @@ class AuthPage extends StatefulWidget {
 // TODO And the Terms and Conditions Switch should always be accepted
 class _AuthPageState extends State<AuthPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _email = '';
-  String _password = '';
   bool _acceptTerms = false;
 
   final Map<String, dynamic> _formData = {
@@ -70,7 +70,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  loginUser() {
+  loginUser(Function loginUser) {
     if (_formKey.currentState.validate()) {
       print("Validating user input");
       if (_formData["acceptTerms"] == false) {
@@ -84,7 +84,8 @@ class _AuthPageState extends State<AuthPage> {
         return;
       }
       _formKey.currentState.save();
-      print("form data is $_formData");
+      loginUser(_formData['email'], _formData['password']);
+      print("form data after login is $_formData");
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
@@ -134,13 +135,18 @@ class _AuthPageState extends State<AuthPage> {
                                         title: Text('Accept Terms'),
                                       ),
                                       SizedBox(height: 20.0),
-                                      RaisedButton(
-                                              textColor: Colors.white,
-                                              color: Theme
-                                                      .of(context)
-                                                      .accentColor,
-                                              child: Text('Login'),
-                                              onPressed: () => loginUser())
+                                      ScopedModelDescendant<MainModel>(
+                                        builder: (BuildContext context, Widget child,
+                                                  MainModel model) {
+                                          return RaisedButton(
+                                                  textColor: Colors.white,
+                                                  color: Theme
+                                                          .of(context)
+                                                          .accentColor,
+                                                  child: Text('Login'),
+                                                  onPressed: () => loginUser(model.login));
+                                        },
+                                      )
                                     ],
                                   ),
                                 )),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/scoped_models/product_scope_model.dart';
+import 'package:flutter_course/scoped_models/main_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../price_tag.dart';
@@ -7,19 +7,21 @@ import '../price_tag.dart';
 class ProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<ProductModel>(
-      builder: (BuildContext context, Widget child, ProductModel model) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
         return ListView.builder(
           // so there logic here will be to return products of only favourites or those that are not
-                itemCount: model.favourites ? model.getProductsByFavourites.length : model
-                        .getProducts.length,
+                itemCount: model.favourites
+                        ? model.getProductsByFavourites.length
+                        : model.getProducts.length,
                 itemBuilder: (BuildContext context, int pos) {
                   return Card(
                     child: Column(
                       children: <Widget>[
                         /*Our Product Image*/
-                        Image.asset(model.favourites ? model.getProductsByFavourites[pos]
-                                .productImage : model.getProducts[pos].productImage),
+                        Image.asset(model.favourites
+                                ? model.getProductsByFavourites[pos].productImage
+                                : model.getProducts[pos].productImage),
                         Container(
                                 margin: EdgeInsets.only(top: 12.0),
                                 child: Row(
@@ -27,8 +29,10 @@ class ProductsList extends StatelessWidget {
                                   children: <Widget>[
                                     /*Our ProductName*/
                                     Text(
-                                      model.favourites ? model.getProductsByFavourites[pos]
-                                              .productName : model.getProducts[pos].productName,
+                                      model.favourites
+                                              ? model
+                                              .getProductsByFavourites[pos].productName
+                                              : model.getProducts[pos].productName,
                                       style: TextStyle(
                                               fontSize: 26.0,
                                               fontWeight: FontWeight.bold,
@@ -38,11 +42,12 @@ class ProductsList extends StatelessWidget {
                                       width: 8.0,
                                     ),
                                     /*Our Product Price Tag widget*/
-                                    PriceTag(
-                                            model.favourites ? model.getProductsByFavourites[pos]
-                                                    .productPrice.toString() : model
-                                                    .getProducts[pos]
-                                                    .productPrice.toString()),
+                                    PriceTag(model.favourites
+                                            ? model
+                                            .getProductsByFavourites[pos].productPrice
+                                            .toString()
+                                            : model.getProducts[pos].productPrice
+                                            .toString()),
                                   ],
                                 )),
                         /** Location textView*/
@@ -54,6 +59,9 @@ class ProductsList extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6.0),
                           ),
                         ),
+//                    Text(model.favourites
+//                        ? model.getProductsByFavourites[pos].userEmail
+//                        : model.getProducts[pos].userEmail),
                         ButtonBar(
                           alignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -78,7 +86,8 @@ class ProductsList extends StatelessWidget {
                             ),
                             IconButton(
                               // OnPressed should make these Product our Favourite
-                              icon: Icon(model.getProducts[pos].isFavourite || model.favourites
+                              icon: Icon(model.getProducts[pos].isFavourite ||
+                                      model.favourites
                                       ? Icons.favorite
                                       : Icons.favorite_border),
                               color: Colors.red,
