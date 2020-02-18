@@ -50,14 +50,13 @@ class HomePage extends StatelessWidget {
                               ? Center(
                           child: CircularProgressIndicator(),
                       )
-                              : ProductsList(appModel: productModel,));
+                              : ProductsList(
+                          appModel: productModel,
+                      ));
           },
       );
   }
 
   Widget buildHomePage(BuildContext context) {
-
   }
-
-
 }
