@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/scoped_models/main_model.dart';
+import 'package:flutter_course/scoped_models/AppModel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -92,6 +92,8 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userModel = ScopedModel.of<AppModel>(context, rebuildOnChange: true);
+
     final double deviceWidth = MediaQuery
             .of(context)
             .size
@@ -104,53 +106,47 @@ class _AuthPageState extends State<AuthPage> {
             ),
             body: Container(
               /*Background image/cover for our Auth page*/
-                    decoration: BoxDecoration(
-                            image: DecorationImage(
-                                    image: AssetImage('assets/images/background_image.jpg'),
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                            Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
-                    padding: EdgeInsets.all(12.0),
-                    child: Center(
-                      child: SingleChildScrollView(
+              decoration: BoxDecoration(
+                      image: DecorationImage(
+                              image: AssetImage('assets/images/background_image.jpg'),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                      Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
+              padding: EdgeInsets.all(12.0),
+              child: Center(
+                child: SingleChildScrollView(
                         child: Container(
-                                width: targetWidth,
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    children: <Widget>[
-                                      _buildEmailTextInput(),
-                                      SizedBox(
-                                        height: 18.0,
-                                      ),
-                                      _buildPasswordTextInput(),
-                                      SwitchListTile(
-                                        value: _acceptTerms,
-                                        onChanged: (bool value) {
-                                          setState(() {
-                                            _acceptTerms = value;
-                                            _formData["acceptTerms"] = value;
-                                          });
-                                        },
-                                        title: Text('Accept Terms'),
-                                      ),
-                                      SizedBox(height: 20.0),
-                                      ScopedModelDescendant<MainModel>(
-                                        builder: (BuildContext context, Widget child,
-                                                  MainModel model) {
-                                          return RaisedButton(
-                                                  textColor: Colors.white,
-                                                  color: Theme
-                                                          .of(context)
-                                                          .accentColor,
-                                                  child: Text('Login'),
-                                                  onPressed: () => loginUser(model.login));
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                )),
-                      ),
-                    )));
+                          width: targetWidth,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(children: <Widget>[
+                              _buildEmailTextInput(),
+                              SizedBox(
+                                height: 18.0,
+                              ),
+                              _buildPasswordTextInput(),
+                              SwitchListTile(
+                                value: _acceptTerms,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    _acceptTerms = value;
+                                    _formData["acceptTerms"] = value;
+                                  });
+                                },
+                                title: Text('Accept Terms'),
+                              ),
+                              SizedBox(height: 20.0),
+                              RaisedButton(
+                                      textColor: Colors.white,
+                                      color: Theme
+                                              .of(context)
+                                              .accentColor,
+                                      child: Text('Login'),
+                                      onPressed: () => loginUser(userModel.login))
+                            ]),
+                          ),
+                        )),
+              ),
+            ));
   }
 }

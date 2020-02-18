@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/scoped_models/main_model.dart';
+import 'package:flutter_course/scoped_models/AppModel.dart';
 import 'package:flutter_course/widget/product/products_list.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-      return ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context, Widget child, MainModel productModel) {
+      return ScopedModelDescendant<AppModel>(
+          builder: (BuildContext context, Widget child, AppModel productModel) {
               return Scaffold(
                       drawer: Drawer(
                           elevation: 8.0,
@@ -42,13 +42,22 @@ class HomePage extends StatelessWidget {
                             : Icons.favorite_border),
                     onPressed: () {
                         productModel.toggleFavouriteMode();
-                        productModel.notifyListeners();
                     },
                 )
                           ],
                       ),
-            body: ProductsList());
+                      body: productModel.isLoading
+                              ? Center(
+                          child: CircularProgressIndicator(),
+                      )
+                              : ProductsList(appModel: productModel,));
           },
       );
   }
+
+  Widget buildHomePage(BuildContext context) {
+
+  }
+
+
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/main_model.dart';
+import 'package:flutter_course/scoped_models/product_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductPage extends StatelessWidget {
@@ -36,7 +36,7 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
-      builder: (BuildContext context, Widget child, MainModel model) {
+      builder: (BuildContext context, Widget child, ProductModel model) {
         return WillPopScope(
                 onWillPop: () {
                   print("Back Button Pressed");

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProductPoJo {
+    String id;
     final String productName;
     final String productDesc;
     final String productImage;
@@ -9,14 +10,14 @@ class ProductPoJo {
     final String userId;
     final String userEmail;
 
-  ProductPoJo(
-      {@required this.productName,
+  ProductPoJo({@required this.id,
+                  @required this.productName,
       @required this.productDesc,
       @required this.productImage,
-          @required this.productPrice,
-          this.isFavourite = false,
-          @required this.userId,
-          @required this.userEmail});
+                  @required this.productPrice,
+                  this.isFavourite = false,
+                  @required this.userId,
+                  @required this.userEmail});
 
   @override
   String toString() {

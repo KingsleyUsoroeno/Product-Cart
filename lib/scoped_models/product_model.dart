@@ -1,12 +1,57 @@
-import 'package:flutter_course/models/productPojo.dart';
+import 'dart:convert';
 
-class ProductModel {
+import 'package:flutter_course/models/productPojo.dart';
+import 'package:http/http.dart' as httpClient;
+import 'package:scoped_model/scoped_model.dart';
+
+final String _databaseUrl = "https://flutter-products-7fe3f.firebaseio.com/";
+
+mixin ProductModel on Model {
   List<ProductPoJo> _products = [];
   int _selectedProductIndex;
   bool _showFavourites = false;
+  bool isLoading = false;
 
   List<ProductPoJo> get getProducts {
-    return List.from(_products);
+    List<ProductPoJo> products =
+    _showFavourites ? getProductsByFavourites : List.from(_products);
+    return products;
+  }
+
+  List<ProductPoJo> get allProducts {
+    return _products;
+  }
+
+  void fetchProductsFromFirebase() {
+    isLoading = true;
+    httpClient
+            .get(_databaseUrl + "products.json")
+            .then((httpClient.Response response) {
+      print(json.decode(response.body));
+
+      final List<ProductPoJo> fetchedProductList = [];
+      final Map<String, dynamic> productListData = json.decode(response.body);
+      productListData.forEach((String productId, dynamic productData) {
+        ProductPoJo productPoJo = ProductPoJo(
+                id: productId,
+                productName: productData['name'],
+                productDesc: productData['description'],
+                productImage: productData['image'],
+                isFavourite: productData['isFavourite'],
+                productPrice: productData['price'],
+                userEmail: productData['userEmail'],
+                userId: productData['userId']);
+        fetchedProductList.add(productPoJo);
+        isLoading = false;
+      });
+
+      print("fetched product list is $fetchedProductList");
+      _products = fetchedProductList;
+      print("isLoading Value is $isLoading");
+      notifyListeners();
+    }).catchError((e) {
+      print("Encoutered an error fetching products from fireBase $e");
+    });
   }
 
   List<ProductPoJo> get getProductsByFavourites {
@@ -22,10 +67,32 @@ class ProductModel {
   }
 
   void addProduct(ProductPoJo productPoJo) {
+    isLoading = true;
+    final Map<String, dynamic> productData = {
+      'name': productPoJo.productName,
+      'description': productPoJo.productDesc,
+      'image':
+      'https://www.wyldflour.com/wp-content/uploads/2019/04/Chocolate-Cake-with-Strawberry-Buttercream.jpg',
+      'price': productPoJo.productPrice,
+      'isFavourite': false,
+      'userEmail': productPoJo.userEmail,
+      'userId': productPoJo.userId
+    };
+
+    httpClient
+            .post(_databaseUrl + "products.json", body: json.encode(productData))
+            .then((httpClient.Response response) {
+      isLoading = false;
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      productPoJo.id = responseData['name'];
+      print("response data from Firebase is $responseData");
+    }).catchError(() {
+      print("Caught an error while posting to FireBase");
+    });
+
     _products.add(productPoJo);
     print("Added product is $productPoJo");
     _selectedProductIndex = null;
-    //notifyListeners();
   }
 
   ProductPoJo getProduct() {
@@ -45,11 +112,13 @@ class ProductModel {
             productDesc: productPoJo.productDesc,
             productImage: productPoJo.productImage,
             productPrice: productPoJo.productPrice,
-            isFavourite: isUpdateFav);
+            isFavourite: isUpdateFav,
+            userEmail: productPoJo.userEmail,
+            userId: productPoJo.userId);
     if (_selectedProductIndex != null) {
       _products[_selectedProductIndex] = updatedProduct;
       _selectedProductIndex = null;
-      //notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -60,7 +129,7 @@ class ProductModel {
         _products[_selectedProductIndex] = product;
         _selectedProductIndex = null;
         print("Updated product is ${_products.toString()}");
-        //notifyListeners();
+        notifyListeners();
       }
     }
   }
@@ -69,7 +138,7 @@ class ProductModel {
     if (_selectedProductIndex != null) {
       _products.removeAt(_selectedProductIndex);
       _selectedProductIndex = null;
-      //notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -84,7 +153,7 @@ class ProductModel {
 
   void toggleFavouriteMode() {
     _showFavourites = !_showFavourites;
-    //notifyListeners();
+    notifyListeners();
   }
 
   bool get favourites {
