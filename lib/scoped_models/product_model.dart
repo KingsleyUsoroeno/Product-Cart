@@ -1,105 +1,110 @@
 import 'dart:convert';
 
+import 'package:flutter_course/local/firebase_database.dart';
 import 'package:flutter_course/models/productPojo.dart';
 import 'package:http/http.dart' as httpClient;
 import 'package:scoped_model/scoped_model.dart';
 
-final String _databaseUrl = "https://flutter-products-7fe3f.firebaseio.com/";
+final String _databaseUrl = "https://flutter-products-7fe3f.firebaseio.com/products.json";
 
 mixin ProductModel on Model {
-  List<ProductPoJo> _products = [];
+  List<ProductPoJo> _allProduct = [];
   int _selectedProductIndex;
   bool _showFavourites = false;
-  bool isLoading = false;
+  bool _isLoading = false;
+  final _fireBaseDataBaseHelper = FirebaseDatabaseService();
 
   List<ProductPoJo> get getProducts {
-    List<ProductPoJo> products =
-    _showFavourites ? getProductsByFavourites : List.from(_products);
+    List<ProductPoJo> products = _showFavourites ? getProductsByFavourites : List.from(_allProduct);
     return products;
   }
 
   List<ProductPoJo> get allProducts {
-    return _products;
+    return _allProduct;
   }
 
-  void fetchProductsFromFirebase() {
-    isLoading = true;
-    httpClient
-            .get(_databaseUrl + "products.json")
-            .then((httpClient.Response response) {
-      print(json.decode(response.body));
+  void setLoadingState(bool loadingStatus) {
+    _isLoading = loadingStatus;
+    print("is loading value is  $_isLoading");
+    notifyListeners();
+  }
 
-      final List<ProductPoJo> fetchedProductList = [];
-      final Map<String, dynamic> productListData = json.decode(response.body);
-      productListData.forEach((String productId, dynamic productData) {
-        ProductPoJo productPoJo = ProductPoJo(
-                id: productId,
-                productName: productData['name'],
-                productDesc: productData['description'],
-                productImage: productData['image'],
-                isFavourite: productData['isFavourite'],
-                productPrice: productData['price'],
-                userEmail: productData['userEmail'],
-                userId: productData['userId']);
-        fetchedProductList.add(productPoJo);
-        isLoading = false;
-      });
+  bool getLoadingState() {
+    return _isLoading;
+  }
 
-      print("fetched product list is $fetchedProductList");
-      _products = fetchedProductList;
-      print("isLoading Value is $isLoading");
-      notifyListeners();
-    }).catchError((e) {
+  Future<List<ProductPoJo>> fetchProductsFromFirebase() async {
+    try {
+      final request = await httpClient.get(_databaseUrl);
+      print(json.decode(request.body));
+      List<ProductPoJo> fetchedProductList = [];
+      final Map<String, dynamic> productListData = json.decode(request.body);
+
+      fetchedProductList = productListData.keys.map((String productId) {
+        final _product = productListData[productId];
+        //_allProduct =  _product;
+        return ProductPoJo(
+            id: productId,
+            productName: _product['name'],
+            productDesc: _product['description'],
+            productImage: _product['image'],
+            isFavourite: _product['isFavourite'],
+            productPrice: _product['price'],
+            userEmail: _product['userEmail'],
+            userId: _product['userId']);
+      }).toList();
+      return fetchedProductList;
+    } catch (e) {
       print("Encoutered an error fetching products from fireBase $e");
-    });
+      throw e;
+    }
   }
 
   List<ProductPoJo> get getProductsByFavourites {
     if (_showFavourites) {
       print("Show Favourites value is $_showFavourites");
-      List<ProductPoJo> favouriteProduct =
-      _products.where((ProductPoJo poJo) => poJo.isFavourite).toList();
+      List<ProductPoJo> favouriteProduct = _allProduct.where((ProductPoJo poJo) => poJo.isFavourite).toList();
       print("favourite product is $favouriteProduct");
       return List.from(favouriteProduct);
     } else {
-      return List.from(_products);
+      return List.from(_allProduct);
     }
   }
 
-  void addProduct(ProductPoJo productPoJo) {
-    isLoading = true;
-    final Map<String, dynamic> productData = {
-      'name': productPoJo.productName,
-      'description': productPoJo.productDesc,
-      'image':
-      'https://www.wyldflour.com/wp-content/uploads/2019/04/Chocolate-Cake-with-Strawberry-Buttercream.jpg',
-      'price': productPoJo.productPrice,
-      'isFavourite': false,
-      'userEmail': productPoJo.userEmail,
-      'userId': productPoJo.userId
-    };
+  Future addProduct(ProductPoJo productPoJo) async {
+    _fireBaseDataBaseHelper.addProduct(productPoJo);
+    notifyListeners();
 
-    httpClient
-            .post(_databaseUrl + "products.json", body: json.encode(productData))
-            .then((httpClient.Response response) {
-      isLoading = false;
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      productPoJo.id = responseData['name'];
-      print("response data from Firebase is $responseData");
-    }).catchError(() {
-      print("Caught an error while posting to FireBase");
-    });
-
-    _products.add(productPoJo);
-    print("Added product is $productPoJo");
-    _selectedProductIndex = null;
+//    try {
+//      final Map<String, dynamic> productData = {
+//        'name': productPoJo.productName,
+//        'description': productPoJo.productDesc,
+//        'image':
+//            'https://www.wyldflour.com/wp-content/uploads/2019/04/Chocolate-Cake-with-Strawberry-Buttercream.jpg',
+//        'price': productPoJo.productPrice,
+//        'isFavourite': false,
+//        'userEmail': productPoJo.userEmail,
+//        'userId': productPoJo.userId
+//      };
+//
+//      final response =
+//          await httpClient.post(_databaseUrl, body: json.encode(productData));
+//      final Map<String, dynamic> responseData = json.decode(response.body);
+//      productPoJo.id = responseData['name'];
+//      _allProduct.add(productPoJo);
+//      _selectedProductIndex = null;
+//      notifyListeners();
+//    } catch (e) {
+//      print("Caught an error while posting to FireBase $e");
+//      throw e;
+//    }
   }
 
   ProductPoJo getProduct() {
     if (_selectedProductIndex == null) {
       return null;
     }
-    return _products[_selectedProductIndex];
+    return _allProduct[_selectedProductIndex];
   }
 
   void setProductAsFavourite(ProductPoJo productPoJo) {
@@ -108,35 +113,50 @@ mixin ProductModel on Model {
     // so these is inverted so if ti was true it is going to be false, if it was false its going to be true
     final bool isUpdateFav = !isCurrentlyFavourite;
     ProductPoJo updatedProduct = ProductPoJo(
-            productName: productPoJo.productName,
-            productDesc: productPoJo.productDesc,
-            productImage: productPoJo.productImage,
-            productPrice: productPoJo.productPrice,
-            isFavourite: isUpdateFav,
-            userEmail: productPoJo.userEmail,
-            userId: productPoJo.userId);
+        id: productPoJo.id,
+        productName: productPoJo.productName,
+        productDesc: productPoJo.productDesc,
+        productImage: productPoJo.productImage,
+        productPrice: productPoJo.productPrice,
+        isFavourite: isUpdateFav,
+        userEmail: productPoJo.userEmail,
+        userId: productPoJo.userId);
     if (_selectedProductIndex != null) {
-      _products[_selectedProductIndex] = updatedProduct;
+      _allProduct[_selectedProductIndex] = updatedProduct;
       _selectedProductIndex = null;
       notifyListeners();
     }
   }
 
-  void updateProduct(ProductPoJo product) {
-    if (_selectedProductIndex != null) {
-      print("Product is ${_products[_selectedProductIndex]}");
-      if (_products != null) {
-        _products[_selectedProductIndex] = product;
+  Future<httpClient.Response> updateProduct(ProductPoJo product) async {
+    try {
+      if (_selectedProductIndex != null) {
+        print("Product is ${_allProduct[_selectedProductIndex]}");
+        _allProduct[_selectedProductIndex] = product;
         _selectedProductIndex = null;
-        print("Updated product is ${_products.toString()}");
+        print("Updated product is ${_allProduct.toString()}");
         notifyListeners();
       }
+
+      final Map<String, dynamic> updatedProductData = {
+        'name': product.productName,
+        'description': product.productDesc,
+        'price': product.productPrice,
+        'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRpIGo_FgYwa_mATbL5TNgS3Fyv7bUfMEUtYTF9iSMjN0bJZW77',
+        'userEmail': product.userEmail,
+        'userId': product.userId
+      };
+
+      print("product id is ${product.id}");
+      return await httpClient.put("https://flutter-products-7fe3f.firebaseio.com/products/${product.id}.json", body: json.encode(updatedProductData));
+    } catch (e) {
+      print("Caught an exception fetching Products from firebase $e");
     }
   }
 
   void deleteProduct() {
     if (_selectedProductIndex != null) {
-      _products.removeAt(_selectedProductIndex);
+      _allProduct.removeAt(_selectedProductIndex);
       _selectedProductIndex = null;
       notifyListeners();
     }

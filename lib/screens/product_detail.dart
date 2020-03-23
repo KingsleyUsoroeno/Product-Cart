@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/product_model.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 class ProductPage extends StatelessWidget {
   final ProductPoJo _product;
@@ -35,23 +33,23 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(
-      builder: (BuildContext context, Widget child, ProductModel model) {
-        return WillPopScope(
-                onWillPop: () {
-                  print("Back Button Pressed");
-                  Navigator.pop(context, false);
-                  return Future.value(false);
-                },
-                child: Scaffold(
-                  appBar: AppBar(
-                    centerTitle: true,
-                    title: Text(_product.productName),
-                  ),
-                  body: Column(
+    return WillPopScope(
+        onWillPop: () {
+          print("Back Button Pressed");
+          Navigator.pop(context, false);
+          return Future.value(false);
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(_product.productName),
+            ),
+            body: ListView(
+              children: <Widget>[
+                Column(
                     children: <Widget>[
                       /*Our Products Image*/
-                      Image.asset(_product.productImage),
+                      Image.network(_product.productImage),
 
                       /*Our Product Description embedded into a Container Widget*/
                       Container(
@@ -69,8 +67,8 @@ class ProductPage extends StatelessWidget {
                       )
                     ],
                   ),
-                ));
-      },
-    );
+              ],
+            )
+        ));
   }
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/pages/create_or_edit_product_page.dart';
-import 'package:flutter_course/pages/my_products_page.dart';
+import 'package:flutter_course/scoped_models/AppModel.dart';
+import 'package:flutter_course/screens/my_products_screen.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import 'create_product_screen.dart';
 
 class ManageProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appModel = ScopedModel.of<AppModel>(context, rebuildOnChange: true);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -15,6 +19,28 @@ class ManageProductPage extends StatelessWidget {
                 AppBar(
                   automaticallyImplyLeading: false,
                   title: Text('Choose'),
+                ),
+                Container(
+                  height: 200.0,
+                  color: Theme
+                      .of(context)
+                      .primaryColor,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundImage: AssetImage('assets/images/profile_img.png'),
+                          maxRadius: 60.0,
+                        ),
+                        SizedBox(height: 10.0,),
+                        Text('Kingsley Usoro', style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0
+                        ),)
+                      ],
+                    ),
+                  ),
                 ),
                 ListTile(
                     leading: Icon(
@@ -44,8 +70,8 @@ class ManageProductPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: <Widget>[
-                ProductCreateOrEditPage(),
-                MyProductsPage(),
+              CreateProduct(),
+              MyProductsPage(appModel: appModel,),
             ],
           ),
         ));
