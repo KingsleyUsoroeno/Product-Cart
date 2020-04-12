@@ -24,7 +24,7 @@ class OnBoardingState extends State<OnBoarding> {
     if (hasUserOnBoarded == false) {
       print("These is the first time user has opened the App");
     } else if (hasUserOnBoarded == true) {
-      Navigator.pushReplacementNamed(context, '/auth');
+      Navigator.pushReplacementNamed(context, '/register');
     }
   }
 
@@ -76,7 +76,7 @@ class OnBoardingState extends State<OnBoarding> {
               GestureDetector(
                 onTap: () {
                   SharedPreferenceHelper.saveBoolean(_HAS_ON_BOARDED, true);
-                  Navigator.pushReplacementNamed(context, '/auth');
+                  Navigator.pushReplacementNamed(context, '/onboarding');
                 },
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 30.0, right: 22.0),

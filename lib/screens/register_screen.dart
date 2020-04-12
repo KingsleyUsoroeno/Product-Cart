@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
 import 'package:flutter_course/models/user.dart';
-import 'package:flutter_course/scoped_models/AppModel.dart';
-import 'package:flutter_course/scoped_models/user_model.dart';
+import 'package:flutter_course/scoped_models/auth_model.dart';
 import 'package:flutter_course/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -29,18 +28,13 @@ class _AuthPageState extends State<AuthPage> {
   bool _acceptTerms = false;
   static String USER = "user";
 
-  final Map<String, dynamic> _formData = {
-    "email": "",
-    "password": "",
-    "acceptTerms": false
-  };
+  final Map<String, dynamic> _formData = {"email": "", "password": "", "acceptTerms": false};
 
   // change to textFormField
   Widget _buildEmailTextInput() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-          labelText: 'Email', fillColor: Colors.white, filled: true),
+      decoration: InputDecoration(labelText: 'Email', fillColor: Colors.white, filled: true),
       onSaved: (String email) {
         _formData["email"] = email;
       },
@@ -63,8 +57,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget _buildPasswordTextInput() {
     return TextFormField(
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(
-          labelText: 'Password', filled: true, fillColor: Colors.white),
+      decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white),
       textInputAction: TextInputAction.done,
       obscureText: true,
       onSaved: (String password) {
@@ -83,7 +76,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  registerUser(UserModel userModel) async {
+  registerUser(AuthProvider auth) async {
     if (_formKey.currentState.validate()) {
       print("Validating user input");
       if (_formData["acceptTerms"] == false) {
@@ -95,16 +88,16 @@ class _AuthPageState extends State<AuthPage> {
       String email = _formData['email'];
       String password = _formData['password'];
       print("form data after inputed values are $_formData");
-      userModel.loadingState(true);
-      dynamic result = await userModel.registerUser(email, password);
+      auth.loadingState(true);
+      dynamic result = await auth.registerUser(email, password);
       // loading state
       if (result == null) {
         // registration was not successful
-        userModel.loadingState(false);
+        auth.loadingState(false);
         showToast("Registration failed, check and try again");
         return;
       }
-      userModel.loadingState(false);
+      auth.loadingState(false);
       // Save user response to SharedPreferences
       String encodedUser = jsonEncode(result);
       SharedPreferenceHelper.saveString(USER, encodedUser);
@@ -134,7 +127,7 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userModel = ScopedModel.of<AppModel>(context, rebuildOnChange: true);
+    final auth = Provider.of<AuthProvider>(context, listen: false);
 
     final double deviceWidth = MediaQuery
         .of(context)
@@ -142,11 +135,12 @@ class _AuthPageState extends State<AuthPage> {
         .width;
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
 
-    return userModel.getLoading()
+    return auth.loading
         ? LoadingSpinner()
         : Scaffold(
         appBar: AppBar(
-          title: Text('Login'),
+          title: Text('Register'),
+          centerTitle: true,
         ),
         body: Container(
           /*Background image/cover for our Auth page*/
@@ -154,9 +148,7 @@ class _AuthPageState extends State<AuthPage> {
                 image: DecorationImage(
                     image: AssetImage('assets/images/background_image.jpg'),
                     fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                        Colors.black12.withOpacity(0.3),
-                        BlendMode.dstATop))),
+                    colorFilter: ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
             padding: EdgeInsets.all(12.0),
             child: Center(
               child: SingleChildScrollView(
@@ -185,14 +177,35 @@ class _AuthPageState extends State<AuthPage> {
                             width: 200.0,
                             height: 40.0,
                             child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                               textColor: Colors.white,
                               color: Theme
                                   .of(context)
                                   .accentColor,
                               child: Text('Register'),
-                              onPressed: () => registerUser(userModel),
+                              onPressed: () => registerUser(auth),
+                            )),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          'OR',
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        SizedBox(
+                            width: 200.0,
+                            height: 40.0,
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                              textColor: Colors.white,
+                              color: Theme
+                                  .of(context)
+                                  .accentColor,
+                              child: Text('Log in'),
+                              onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
                             )),
                       ]),
                     )),

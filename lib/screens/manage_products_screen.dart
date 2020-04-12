@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_course/scoped_models/AppModel.dart';
 import 'package:flutter_course/screens/my_products_screen.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 import 'create_product_screen.dart';
 
 class ManageProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appModel = ScopedModel.of<AppModel>(context, rebuildOnChange: true);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -33,11 +30,13 @@ class ManageProductPage extends StatelessWidget {
                           backgroundImage: AssetImage('assets/images/profile_img.png'),
                           maxRadius: 60.0,
                         ),
-                        SizedBox(height: 10.0,),
-                        Text('Kingsley Usoro', style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0
-                        ),)
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          'Kingsley Usoro',
+                          style: TextStyle(color: Colors.white, fontSize: 18.0),
+                        )
                       ],
                     ),
                   ),
@@ -48,8 +47,7 @@ class ManageProductPage extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                     title: Text('All Products'),
-                    onTap: () =>
-                        Navigator.pushReplacementNamed(context, "/home"))
+                    onTap: () => Navigator.pushReplacementNamed(context, "/home"))
               ],
             ),
           ),
@@ -71,7 +69,7 @@ class ManageProductPage extends StatelessWidget {
           body: TabBarView(
             children: <Widget>[
               CreateProduct(),
-              MyProductsPage(appModel: appModel,),
+              MyProductsPage(),
             ],
           ),
         ));

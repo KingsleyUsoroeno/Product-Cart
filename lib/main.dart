@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/AppModel.dart';
-import 'package:flutter_course/screens/auth_screen.dart';
+import 'package:flutter_course/scoped_models/auth_model.dart';
 import 'package:flutter_course/screens/home_screen.dart';
+import 'package:flutter_course/screens/login_screen.dart';
 import 'package:flutter_course/screens/manage_products_screen.dart';
 import 'package:flutter_course/screens/onboarding_screen.dart';
 import 'package:flutter_course/screens/product_detail.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_course/screens/register_screen.dart';
+import 'package:provider/provider.dart';
+
+import 'scoped_models/product_model.dart';
 
 main() => runApp(MyApp());
 
@@ -21,8 +24,8 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel(
-      model: AppModel(),
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => AuthProvider()), ChangeNotifierProvider(create: (context) => ProductProvider())],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
@@ -34,7 +37,9 @@ class MyAppState extends State<MyApp> {
           routes: {
             '/home': (BuildContext context) => HomePage(),
             '/manageProduct': (BuildContext context) => ManageProductPage(),
-            '/auth': (BuildContext context) => AuthPage()
+            '/register': (BuildContext context) => AuthPage(),
+            '/login': (BuildContext context) => LoginScreen(),
+            '/onboarding': (BuildContext context) => OnBoarding()
           },
 
           // ignore: missing_return
@@ -43,8 +48,7 @@ class MyAppState extends State<MyApp> {
               case "/products":
                 var data = settings.arguments as ProductPoJo;
                 if (data != null) {
-                  return MaterialPageRoute<bool>(
-                      builder: (BuildContext context) => ProductPage(data));
+                  return MaterialPageRoute<bool>(builder: (BuildContext context) => ProductPage(data));
                 }
                 break;
               default:
@@ -52,13 +56,12 @@ class MyAppState extends State<MyApp> {
                     builder: (BuildContext context) =>
                         Scaffold(
                           body: Center(
-                            child:
-                            Text('No route defined for ${settings.name}'),
+                            child: Text('No route defined for ${settings.name}'),
                           ),
                         ));
             }
           },
-          home: OnBoarding()),
+          initialRoute: '/onboarding'),
     );
   }
 }

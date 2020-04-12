@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/AppModel.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_course/scoped_models/product_model.dart';
+import 'package:provider/provider.dart';
 
 import '../price_tag.dart';
 
@@ -12,7 +12,7 @@ class ProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appModel = ScopedModel.of<AppModel>(context, rebuildOnChange: true);
+    final productProvider = Provider.of<ProductProvider>(context, listen: false);
     return ListView.builder(
       // so there logic here will be to return products of only favourites or those that are not
         itemCount: products.length,
@@ -31,10 +31,7 @@ class ProductsList extends StatelessWidget {
                         /*Our ProductName*/
                         Text(
                           product.productName,
-                          style: TextStyle(
-                              fontSize: 26.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'SourceCode'),
+                          style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'SourceCode'),
                         ),
                         SizedBox(
                           width: 8.0,
@@ -58,16 +55,13 @@ class ProductsList extends StatelessWidget {
                   children: <Widget>[
                     IconButton(
                       onPressed: () {
-                        appModel.setSelectedProductIndex(pos);
-                        Navigator.pushNamed<bool>(context, "/products",
-                            arguments: product)
-                            .then((bool value) {
+                        productProvider.setSelectedProductIndex(pos);
+                        Navigator.pushNamed<bool>(context, "/products", arguments: product).then((bool value) {
                           if (value == false) {
                             return;
                           }
-                          print(
-                              "object being passed from onBack pressed is $value");
-                          appModel.deleteProduct();
+                          print("object being passed from onBack pressed is $value");
+                          productProvider.deleteProduct();
                         });
                       },
                       color: Theme
@@ -77,13 +71,11 @@ class ProductsList extends StatelessWidget {
                     ),
                     IconButton(
                       // OnPressed should make these Product our Favourite
-                      icon: Icon(product.isFavourite || appModel.favourites
-                          ? Icons.favorite
-                          : Icons.favorite_border),
+                      icon: Icon(product.isFavourite || productProvider.favourites ? Icons.favorite : Icons.favorite_border),
                       color: Colors.red,
                       onPressed: () {
-                        appModel.setSelectedProductIndex(pos);
-                        appModel.setProductAsFavourite(product);
+                        productProvider.setSelectedProductIndex(pos);
+                        productProvider.setProductAsFavourite(product);
                       },
                     ),
                   ],

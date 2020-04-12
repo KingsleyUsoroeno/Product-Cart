@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_course/local/firebase_database.dart';
 import 'package:flutter_course/models/productPojo.dart';
 import 'package:http/http.dart' as httpClient;
-import 'package:scoped_model/scoped_model.dart';
+import 'package:http/http.dart';
 
 final String _databaseUrl = "https://flutter-products-7fe3f.firebaseio.com/products.json";
 
-mixin ProductModel on Model {
+class ProductProvider with ChangeNotifier {
   List<ProductPoJo> _allProduct = [];
   int _selectedProductIndex;
   bool _showFavourites = false;
@@ -19,18 +20,12 @@ mixin ProductModel on Model {
     return products;
   }
 
+  bool get loading => _isLoading;
+
+  bool get favourites => _showFavourites;
+
   List<ProductPoJo> get allProducts {
     return _allProduct;
-  }
-
-  void setLoadingState(bool loadingStatus) {
-    _isLoading = loadingStatus;
-    print("is loading value is  $_isLoading");
-    notifyListeners();
-  }
-
-  bool getLoadingState() {
-    return _isLoading;
   }
 
   Future<List<ProductPoJo>> fetchProductsFromFirebase() async {
@@ -72,32 +67,36 @@ mixin ProductModel on Model {
   }
 
   Future addProduct(ProductPoJo productPoJo) async {
-    _fireBaseDataBaseHelper.addProduct(productPoJo);
-    notifyListeners();
+    //_fireBaseDataBaseHelper.addProduct(productPoJo);
 
-//    try {
-//      final Map<String, dynamic> productData = {
-//        'name': productPoJo.productName,
-//        'description': productPoJo.productDesc,
-//        'image':
-//            'https://www.wyldflour.com/wp-content/uploads/2019/04/Chocolate-Cake-with-Strawberry-Buttercream.jpg',
-//        'price': productPoJo.productPrice,
-//        'isFavourite': false,
-//        'userEmail': productPoJo.userEmail,
-//        'userId': productPoJo.userId
-//      };
-//
-//      final response =
-//          await httpClient.post(_databaseUrl, body: json.encode(productData));
-//      final Map<String, dynamic> responseData = json.decode(response.body);
-//      productPoJo.id = responseData['name'];
-//      _allProduct.add(productPoJo);
-//      _selectedProductIndex = null;
-//      notifyListeners();
-//    } catch (e) {
-//      print("Caught an error while posting to FireBase $e");
-//      throw e;
-//    }
+    try {
+      _isLoading = true;
+      notifyListeners();
+      final Map<String, dynamic> productData = {
+        'name': productPoJo.productName,
+        'description': productPoJo.productDesc,
+        'image': 'https://www.wyldflour.com/wp-content/uploads/2019/04/Chocolate-Cake-with-Strawberry-Buttercream.jpg',
+        'price': productPoJo.productPrice,
+        'isFavourite': false,
+        'userEmail': productPoJo.userEmail,
+        'userId': productPoJo.userId
+      };
+
+      final response = await httpClient.post(_databaseUrl, body: json.encode(productData));
+      if (response.statusCode == 200) {
+        _isLoading = false;
+        notifyListeners();
+      }
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      productPoJo.id = responseData['name'];
+      _allProduct.add(productPoJo);
+      _selectedProductIndex = null;
+      notifyListeners();
+    } catch (e) {
+      print("Caught an error while posting to FireBase $e");
+      throw e;
+    }
   }
 
   ProductPoJo getProduct() {
@@ -128,15 +127,10 @@ mixin ProductModel on Model {
     }
   }
 
-  Future<httpClient.Response> updateProduct(ProductPoJo product) async {
+  Future<void> updateProduct(ProductPoJo product) async {
     try {
-      if (_selectedProductIndex != null) {
-        print("Product is ${_allProduct[_selectedProductIndex]}");
-        _allProduct[_selectedProductIndex] = product;
-        _selectedProductIndex = null;
-        print("Updated product is ${_allProduct.toString()}");
-        notifyListeners();
-      }
+      _isLoading = true;
+      notifyListeners();
 
       final Map<String, dynamic> updatedProductData = {
         'name': product.productName,
@@ -148,9 +142,21 @@ mixin ProductModel on Model {
       };
 
       print("product id is ${product.id}");
-      return await httpClient.put("https://flutter-products-7fe3f.firebaseio.com/products/${product.id}.json", body: json.encode(updatedProductData));
+      Response response =
+      await httpClient.put("https://flutter-products-7fe3f.firebaseio.com/products/${product.id}.json", body: json.encode(updatedProductData));
+      if (response.statusCode == 200) {
+        debugPrint('response made gotten server was just alright');
+        _isLoading = true;
+        notifyListeners();
+      } else {
+        _isLoading = false;
+        notifyListeners();
+        debugPrint("Failed to get back a response");
+      }
     } catch (e) {
-      print("Caught an exception fetching Products from firebase $e");
+      print("Caught an exception from updating Products to firebase $e");
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -174,9 +180,5 @@ mixin ProductModel on Model {
   void toggleFavouriteMode() {
     _showFavourites = !_showFavourites;
     notifyListeners();
-  }
-
-  bool get favourites {
-    return _showFavourites;
   }
 }

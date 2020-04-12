@@ -7,14 +7,18 @@ import 'package:flutter_course/widget/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-class CreateProduct extends StatefulWidget {
+class EditProduct extends StatefulWidget {
+  final ProductPoJo productToEdit;
+
+  EditProduct({this.productToEdit});
+
   @override
   State<StatefulWidget> createState() {
-    return ProductCreateOrEditState();
+    return EditProductState();
   }
 }
 
-class ProductCreateOrEditState extends State<CreateProduct> {
+class EditProductState extends State<EditProduct> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {"productName": "", "productDesription": "", "productPrice": 10, "image": "assets/images/food.jpg"};
 
@@ -31,6 +35,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
   Widget _buildTitleTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Name'),
+      initialValue: widget.productToEdit != null ? widget.productToEdit.productName : "",
       // ignore: missing_return
       validator: (String val) {
         if (val.trim().isEmpty) {
@@ -48,6 +53,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
       maxLines: 3,
       decoration: InputDecoration(labelText: 'Product Description'),
       keyboardType: TextInputType.multiline,
+      initialValue: widget.productToEdit != null ? widget.productToEdit.productDesc : "",
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
@@ -64,6 +70,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Price'),
       keyboardType: TextInputType.number,
+      initialValue: widget.productToEdit != null ? widget.productToEdit.productPrice.toString() : "",
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
@@ -76,30 +83,33 @@ class ProductCreateOrEditState extends State<CreateProduct> {
     );
   }
 
-  void _editProduct(ProductProvider productProvider, AuthProvider authProvider) async {
+  void _editProduct(ProductProvider provider, AuthProvider authProvider) async {
     /** Form Validation*/
     if (_formKey.currentState.validate()) {
       // these simply means that if all validation logic is okay go ahead and save the inputs
       print('Saving input');
       _formKey.currentState.save();
       // only create a new product if we don't have a product to edit
-      String productName = _formData["productName"];
-      String productDes = _formData["productDesription"];
-      double productPrice = _formData["productPrice"];
-      String image = _formData["image"];
-      User currentUser = await authProvider.getCurrentUser("user");
-      String userId = currentUser.id;
-      String email = currentUser.email;
+      if (widget.productToEdit == null) {
+        String productName = _formData["productName"];
+        String productDes = _formData["productDesription"];
+        double productPrice = _formData["productPrice"];
+        String image = _formData["image"];
+        User currentUser = await authProvider.getCurrentUser("user");
+        String userId = currentUser.id;
+        String email = currentUser.email;
 
-      ProductPoJo newProduct = ProductPoJo(
-          id: new Uuid().v1().toString(),
-          productName: productName,
-          productDesc: productDes,
-          productImage: image,
-          productPrice: productPrice,
-          userId: userId,
-          userEmail: email);
-      await productProvider.addProduct(newProduct);
+        ProductPoJo newProduct = ProductPoJo(
+            id: new Uuid().v1().toString(),
+            productName: productName,
+            productDesc: productDes,
+            productImage: image,
+            productPrice: productPrice,
+            userId: userId,
+            userEmail: email);
+
+        provider.updateProduct(newProduct);
+      }
       //Navigator.pushReplacementNamed(context, "/home");
     }
   }
@@ -108,19 +118,17 @@ class ProductCreateOrEditState extends State<CreateProduct> {
     return RaisedButton(
       textColor: Colors.white,
       color: Theme.of(context).primaryColor,
-      child: Text('Save Product'),
+      child: Text('Edit Product'),
       onPressed: () {
         _editProduct(provider, authProvider);
       },
     );
   }
 
-  // TODO create a custom textInput Widget that can be reUsed
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
-
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final productProvider = Provider.of<ProductProvider>(context, listen: false);
     final Widget pageContent = GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
@@ -138,6 +146,13 @@ class ProductCreateOrEditState extends State<CreateProduct> {
                   ],
                 ))));
 
-    return productProvider.loading ? LoadingSpinner() : Scaffold(body: pageContent);
+    return productProvider.loading
+        ? LoadingSpinner()
+        : Scaffold(
+            appBar: AppBar(
+              title: Text('Edit Product'),
+            ),
+            body: pageContent,
+          );
   }
 }

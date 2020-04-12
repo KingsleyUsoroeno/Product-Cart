@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/AppModel.dart';
+import 'package:flutter_course/scoped_models/product_model.dart';
 import 'package:flutter_course/screens/edit_product_screen.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 
 class MyProductsPage extends StatefulWidget {
-  final AppModel appModel;
-
-  MyProductsPage({this.appModel});
-
   @override
   State<StatefulWidget> createState() {
     return MyProductsPageState();
@@ -18,16 +14,17 @@ class MyProductsPage extends StatefulWidget {
 class MyProductsPageState extends State<MyProductsPage> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(builder: (BuildContext context, Widget child, AppModel model) {
-      return FutureBuilder(
-        future: model.fetchProductsFromFirebase(),
-        builder: (context, AsyncSnapshot<List<ProductPoJo>> asyncSnapShot) {
-          if (asyncSnapShot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (asyncSnapShot.hasError) {
-            return Center(child: Text("Failed to load Data"));
-          } else {
-            return ListView.builder(
+    return Consumer<ProductProvider>(
+      builder: (widget, model, context) {
+        return FutureBuilder(
+          future: model.fetchProductsFromFirebase(),
+          builder: (context, AsyncSnapshot<List<ProductPoJo>> asyncSnapShot) {
+            if (asyncSnapShot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (asyncSnapShot.hasError) {
+              return Center(child: Text("Failed to load Data"));
+            } else {
+              return ListView.builder(
                 itemCount: asyncSnapShot.data.length,
                 itemBuilder: (BuildContext context, int position) {
                   ProductPoJo product = asyncSnapShot.data[position];
@@ -56,24 +53,26 @@ class MyProductsPageState extends State<MyProductsPage> {
                             ),
                             subtitle: Text(product.productDesc),
                             contentPadding: EdgeInsets.all(8.0),
-                            trailing: _buildIconButton(context, model, product, position),
+                            trailing: _buildIconButton(context, product, position),
                           ),
                           Divider()
                         ],
                       ));
-                });
-          }
-        },
-      );
-    });
+                },
+              );
+            }
+          },
+        );
+      },
+    );
   }
 }
 
-Widget _buildIconButton(BuildContext context, AppModel appModel, ProductPoJo product, int selectedIndex) {
+Widget _buildIconButton(BuildContext context, ProductPoJo product, int selectedIndex) {
   return IconButton(
     icon: Icon(Icons.edit),
     onPressed: () {
-      appModel.setSelectedProductIndex(selectedIndex);
+      Provider.of<ProductProvider>(context).setSelectedProductIndex(selectedIndex);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) {
           return EditProduct(

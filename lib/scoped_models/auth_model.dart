@@ -1,19 +1,17 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
 import 'package:flutter_course/models/user.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-mixin UserModel on Model {
+class AuthProvider with ChangeNotifier {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  bool getLoading() {
-    return _isLoading;
-  }
+  bool get loading => _isLoading;
 
-  void loadingState(bool loading) {
+  loadingState(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
@@ -25,18 +23,31 @@ mixin UserModel on Model {
   }
 
   User _getUserFromFirebaseUser(FirebaseUser firebaseUser) {
-    return firebaseUser != null
-        ? User(id: firebaseUser.uid, email: firebaseUser.email)
-        : null;
+    return firebaseUser != null ? User(id: firebaseUser.uid, email: firebaseUser.email) : null;
   }
 
   Future registerUser(String email, String password) async {
     try {
-      AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      loadingState(true);
+      AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      loadingState(false);
       return _getUserFromFirebaseUser(result.user);
     } catch (e) {
       print("Caught an exception registering user ${e.toString()}");
+      loadingState(false);
+      return null;
+    }
+  }
+
+  Future loginUser(String email, String password) async {
+    try {
+      loadingState(true);
+      AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      loadingState(false);
+      return _getUserFromFirebaseUser(result.user);
+    } catch (e) {
+      print("Caught an exception registering user ${e.toString()}");
+      loadingState(false);
       return null;
     }
   }

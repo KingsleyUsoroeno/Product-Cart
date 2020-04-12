@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/AppModel.dart';
+import 'package:flutter_course/scoped_models/product_model.dart';
 import 'package:flutter_course/widget/product/products_list.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<AppModel>(
-      builder: (BuildContext context, Widget child, AppModel productModel) {
+    return Consumer<ProductProvider>(
+      builder: (widget, model, child) {
         return Scaffold(
             drawer: Drawer(
               elevation: 8.0,
@@ -21,7 +21,9 @@ class HomePage extends StatelessWidget {
                   ),
                   Container(
                     height: 200.0,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -45,7 +47,9 @@ class HomePage extends StatelessWidget {
                       title: Text('Manage Products'),
                       leading: Icon(
                         Icons.edit,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme
+                            .of(context)
+                            .primaryColor,
                         size: 20.0,
                       ),
                       onTap: () => Navigator.pushReplacementNamed(context, "/manageProduct")),
@@ -54,7 +58,9 @@ class HomePage extends StatelessWidget {
                     title: Text('Log out'),
                     leading: Icon(
                       Icons.edit,
-                      color: Theme.of(context).primaryColor,
+                      color: Theme
+                          .of(context)
+                          .primaryColor,
                       size: 20.0,
                     ),
                   ),
@@ -66,15 +72,15 @@ class HomePage extends StatelessWidget {
               elevation: 9.0,
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(productModel.favourites ? Icons.favorite : Icons.favorite_border),
+                  icon: Icon(model.favourites ? Icons.favorite : Icons.favorite_border),
                   onPressed: () {
-                    productModel.toggleFavouriteMode();
+                    model.toggleFavouriteMode();
                   },
                 )
               ],
             ),
             body: FutureBuilder(
-              future: productModel.fetchProductsFromFirebase(),
+              future: model.fetchProductsFromFirebase(),
               builder: (context, AsyncSnapshot<List<ProductPoJo>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
