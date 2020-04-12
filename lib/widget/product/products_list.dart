@@ -14,7 +14,7 @@ class ProductsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context, listen: false);
     return ListView.builder(
-      // so there logic here will be to return products of only favourites or those that are not
+        // so there logic here will be to return products of only favourites or those that are not
         itemCount: products.length,
         itemBuilder: (BuildContext context, int pos) {
           ProductPoJo product = products[pos];
@@ -64,9 +64,7 @@ class ProductsList extends StatelessWidget {
                           productProvider.deleteProduct();
                         });
                       },
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
+                      color: Theme.of(context).primaryColor,
                       icon: Icon(Icons.info),
                     ),
                     IconButton(

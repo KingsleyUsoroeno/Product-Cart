@@ -143,7 +143,7 @@ class ProductProvider with ChangeNotifier {
 
       print("product id is ${product.id}");
       Response response =
-      await httpClient.put("https://flutter-products-7fe3f.firebaseio.com/products/${product.id}.json", body: json.encode(updatedProductData));
+          await httpClient.put("https://flutter-products-7fe3f.firebaseio.com/products/${product.id}.json", body: json.encode(updatedProductData));
       if (response.statusCode == 200) {
         debugPrint('response made gotten server was just alright');
         _isLoading = true;

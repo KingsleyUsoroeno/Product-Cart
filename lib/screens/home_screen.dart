@@ -21,9 +21,7 @@ class HomePage extends StatelessWidget {
                   ),
                   Container(
                     height: 200.0,
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
+                    color: Theme.of(context).primaryColor,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -47,9 +45,7 @@ class HomePage extends StatelessWidget {
                       title: Text('Manage Products'),
                       leading: Icon(
                         Icons.edit,
-                        color: Theme
-                            .of(context)
-                            .primaryColor,
+                        color: Theme.of(context).primaryColor,
                         size: 20.0,
                       ),
                       onTap: () => Navigator.pushReplacementNamed(context, "/manageProduct")),
@@ -58,9 +54,7 @@ class HomePage extends StatelessWidget {
                     title: Text('Log out'),
                     leading: Icon(
                       Icons.edit,
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
+                      color: Theme.of(context).primaryColor,
                       size: 20.0,
                     ),
                   ),

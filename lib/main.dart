@@ -53,8 +53,7 @@ class MyAppState extends State<MyApp> {
                 break;
               default:
                 return MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        Scaffold(
+                    builder: (BuildContext context) => Scaffold(
                           body: Center(
                             child: Text('No route defined for ${settings.name}'),
                           ),

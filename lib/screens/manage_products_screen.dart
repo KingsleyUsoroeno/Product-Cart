@@ -19,9 +19,7 @@ class ManageProductPage extends StatelessWidget {
                 ),
                 Container(
                   height: 200.0,
-                  color: Theme
-                      .of(context)
-                      .primaryColor,
+                  color: Theme.of(context).primaryColor,
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
