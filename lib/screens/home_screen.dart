@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/product_model.dart';
+import 'package:flutter_course/scoped_models/product_provider.dart';
 import 'package:flutter_course/widget/product/products_list.dart';
 import 'package:provider/provider.dart';
 

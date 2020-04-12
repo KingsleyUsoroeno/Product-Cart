@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
 import 'package:flutter_course/models/user.dart';
 import 'package:flutter_course/scoped_models/auth_model.dart';
-import 'package:flutter_course/scoped_models/product_model.dart';
+import 'package:flutter_course/scoped_models/product_provider.dart';
 import 'package:flutter_course/widget/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';

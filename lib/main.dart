@@ -10,7 +10,7 @@ import 'package:flutter_course/screens/product_detail.dart';
 import 'package:flutter_course/screens/register_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'scoped_models/product_model.dart';
+import 'scoped_models/product_provider.dart';
 
 main() => runApp(MyApp());
 
