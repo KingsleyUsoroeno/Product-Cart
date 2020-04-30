@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
-import 'package:flutter_course/scoped_models/auth_model.dart';
+import 'package:flutter_course/provider_models/auth_model.dart';
+import 'package:flutter_course/provider_models/cart_model.dart';
+import 'package:flutter_course/provider_models/product_model.dart';
 import 'package:flutter_course/screens/home_screen.dart';
 import 'package:flutter_course/screens/login_screen.dart';
 import 'package:flutter_course/screens/manage_products_screen.dart';
 import 'package:flutter_course/screens/onboarding_screen.dart';
+import 'package:flutter_course/screens/product_cart_screen.dart';
 import 'package:flutter_course/screens/product_detail.dart';
 import 'package:flutter_course/screens/register_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'scoped_models/product_provider.dart';
 
 main() => runApp(MyApp());
 
@@ -25,7 +26,11 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => AuthProvider()), ChangeNotifierProvider(create: (context) => ProductProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => CartModel()),
+        ChangeNotifierProvider(create: (_) => ProductModel())
+      ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
@@ -35,18 +40,19 @@ class MyAppState extends State<MyApp> {
           ),
           // Our App Routes
           routes: {
-            '/home': (BuildContext context) => HomePage(),
+            '/home': (BuildContext context) => HomeScreen(),
             '/manageProduct': (BuildContext context) => ManageProductPage(),
-            '/register': (BuildContext context) => AuthPage(),
+            '/register': (BuildContext context) => RegisterScreen(),
             '/login': (BuildContext context) => LoginScreen(),
-            '/onboarding': (BuildContext context) => OnBoarding()
+            '/onboarding': (BuildContext context) => OnBoardingScreen(),
+            '/cartScreen': (BuildContext context) => ProductCartScreen()
           },
 
           // ignore: missing_return
           onGenerateRoute: (RouteSettings settings) {
             switch (settings.name) {
               case "/products":
-                var data = settings.arguments as ProductPoJo;
+                var data = settings.arguments as Product;
                 if (data != null) {
                   return MaterialPageRoute<bool>(builder: (BuildContext context) => ProductPage(data));
                 }

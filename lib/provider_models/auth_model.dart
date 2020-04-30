@@ -2,25 +2,25 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
 import 'package:flutter_course/models/user.dart';
+import 'package:flutter_course/provider_models/view_state.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthProvider with ChangeNotifier {
   User _authenticatedUser;
-  bool _isLoading = false;
 
-  bool get loading => _isLoading;
+  ViewState _state = ViewState.Idle;
 
-  loadingState(bool loading) {
-    _isLoading = loading;
+  ViewState get state => _state;
+
+  setState(ViewState state) {
+    _state = state;
     notifyListeners();
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-  void login(String email, String password) {
-    print("user email and password is email $email  and paasword is $password");
-  }
 
   User _getUserFromFirebaseUser(FirebaseUser firebaseUser) {
     return firebaseUser != null ? User(id: firebaseUser.uid, email: firebaseUser.email) : null;
@@ -28,26 +28,28 @@ class AuthProvider with ChangeNotifier {
 
   Future registerUser(String email, String password) async {
     try {
-      loadingState(true);
+      setState(ViewState.Busy);
       AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      loadingState(false);
+      setState(ViewState.Idle);
       return _getUserFromFirebaseUser(result.user);
     } catch (e) {
+      showToast("login failed due to ${e.toString()}");
       print("Caught an exception registering user ${e.toString()}");
-      loadingState(false);
+      setState(ViewState.Idle);
       return null;
     }
   }
 
   Future loginUser(String email, String password) async {
     try {
-      loadingState(true);
+      setState(ViewState.Busy);
       AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      loadingState(false);
+      setState(ViewState.Idle);
       return _getUserFromFirebaseUser(result.user);
     } catch (e) {
+      showToast("login failed due to ${e.toString()}");
       print("Caught an exception registering user ${e.toString()}");
-      loadingState(false);
+      setState(ViewState.Idle);
       return null;
     }
   }
@@ -68,5 +70,14 @@ class AuthProvider with ChangeNotifier {
     } else {
       return User(id: "", email: "");
     }
+  }
+
+  showToast(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        gravity: ToastGravity.BOTTOM);
   }
 }

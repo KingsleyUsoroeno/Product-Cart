@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
 
-class OnBoarding extends StatefulWidget {
+class OnBoardingScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return OnBoardingState();
+    return OnBoardingScreenState();
   }
 }
 
-class OnBoardingState extends State<OnBoarding> {
+class OnBoardingScreenState extends State<OnBoardingScreen> {
   // ignore: non_constant_identifier_names
   static final String _HAS_ON_BOARDED = "has_on_boarded";
 
@@ -24,7 +24,8 @@ class OnBoardingState extends State<OnBoarding> {
     if (hasUserOnBoarded == false) {
       print("These is the first time user has opened the App");
     } else if (hasUserOnBoarded == true) {
-      Navigator.pushReplacementNamed(context, '/register');
+      Navigator.pushNamed(context, '/register');
+      //Navigator.pop(context);
     }
   }
 
@@ -76,7 +77,8 @@ class OnBoardingState extends State<OnBoarding> {
               GestureDetector(
                 onTap: () {
                   SharedPreferenceHelper.saveBoolean(_HAS_ON_BOARDED, true);
-                  Navigator.pushReplacementNamed(context, '/onboarding');
+                  Navigator.pushNamed(context, '/register');
+                  //Navigator.of(context).pop();
                 },
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 30.0, right: 22.0),

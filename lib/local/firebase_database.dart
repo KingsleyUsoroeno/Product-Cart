@@ -6,14 +6,14 @@ class FirebaseDatabaseService {
   final CollectionReference productsCollection = Firestore.instance.collection("products");
   final databaseReference = Firestore.instance;
 
-  Future addProduct(ProductPoJo poJo) async {
+  Future addProduct(Product poJo) async {
 //    AppModel model = new AppModel();
 //    User currentUser = await model.getCurrentUser("user");
 //    await databaseReference.collection("products").document(currentUser.id).updateData(poJo.toJson());
     //await databaseReference.collection("products").document(currentUser.id).setData(poJo.toJson(), merge: true);
   }
 
-  Future updateProduct(ProductPoJo product) async {
+  Future updateProduct(Product product) async {
 //    AppModel model = new AppModel();
 //    User currentUser = await model.getCurrentUser("user");
 //    print("inside FirebaseDatabaseService currentUser is $currentUser");

@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 
-class ProductPoJo {
+class Product {
   String id;
+  String productId;
   final String productName;
   final String productDesc;
   final String productImage;
-  final double productPrice;
+  final dynamic productPrice;
   final bool isFavourite;
   final String userId;
   final String userEmail;
 
-  ProductPoJo({@required this.id,
-    @required this.productName,
+  Product(
+      {this.id,
+      @required this.productId,
+      @required this.productName,
       @required this.productDesc,
       @required this.productImage,
-    @required this.productPrice,
-    this.isFavourite = false,
-    @required this.userId,
-    @required this.userEmail});
+      @required this.productPrice,
+      this.isFavourite = false,
+      @required this.userId,
+      @required this.userEmail});
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'productName': productName,
         'productDesc': productDesc,
@@ -31,15 +33,16 @@ class ProductPoJo {
         'userEmail': userEmail
       };
 
-  ProductPoJo.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        productName = json['productName'],
-        productDesc = json['productDesc'],
-        productImage = json['productImage'],
-        productPrice = json['productPrice'],
-        isFavourite = json['isFavourite'],
-        userId = json['userId'],
-        userEmail = json['userEmail'];
+  Product.fromJson(Map snapshot, String id)
+      : id = id ?? '',
+        productId = snapshot['id'],
+        productName = snapshot['productName'],
+        productDesc = snapshot['productDesc'],
+        productImage = snapshot['productImage'],
+        productPrice = snapshot['productPrice'],
+        isFavourite = snapshot['isFavourite'],
+        userId = snapshot['userId'],
+        userEmail = snapshot['userEmail'];
 
   @override
   String toString() {

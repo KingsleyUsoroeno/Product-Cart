@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
 import 'package:flutter_course/models/user.dart';
-import 'package:flutter_course/scoped_models/auth_model.dart';
+import 'package:flutter_course/provider_models/auth_model.dart';
+import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  registerUser(AuthProvider authProvider) async {
+  loginUser(AuthProvider authProvider) async {
     if (_formKey.currentState.validate()) {
       print("Validating user input");
       if (_formData["acceptTerms"] == false) {
@@ -84,16 +85,13 @@ class _LoginScreenState extends State<LoginScreen> {
       String email = _formData['email'];
       String password = _formData['password'];
       print("form data after inputed values are $_formData");
-      authProvider.loadingState(true);
       dynamic result = await authProvider.loginUser(email, password);
       // loading state
       if (result == null) {
         // registration was not successful
-        authProvider.loadingState(false);
         showToast("Login failed,Please check your credentials and try again");
         return;
       }
-      authProvider.loadingState(false);
       // Save user response to SharedPreferences
       String encodedUser = jsonEncode(result);
       SharedPreferenceHelper.saveString(USER, encodedUser);
@@ -104,7 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   showToast(String message) {
     Fluttertoast.showToast(
-        msg: message, toastLength: Toast.LENGTH_LONG, backgroundColor: Colors.red, textColor: Colors.white, gravity: ToastGravity.BOTTOM);
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        gravity: ToastGravity.BOTTOM);
   }
 
   void getCurrentUser() async {
@@ -124,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
 
-    return auth.loading
+    return auth.state == ViewState.Busy
         ? LoadingSpinner()
         : Scaffold(
             appBar: AppBar(
@@ -170,11 +172,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   textColor: Colors.white,
                                   color: Theme.of(context).accentColor,
                                   child: Text('Login'),
-                                  onPressed: () => registerUser(auth),
+                                  onPressed: () => loginUser(auth),
                                 )),
-                            SizedBox(
-                              height: 10.0,
-                            ),
+                            SizedBox(height: 10.0),
                             Text(
                               'OR',
                               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),

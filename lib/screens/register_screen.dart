@@ -3,21 +3,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
 import 'package:flutter_course/models/user.dart';
-import 'package:flutter_course/scoped_models/auth_model.dart';
+import 'package:flutter_course/provider_models/auth_model.dart';
+import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/widget/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-class AuthPage extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _AuthPageState();
+    return _RegisterScreenState();
   }
 }
 
 // TODO Implement a Default Login feature whereBy the email and password field should never be null
 // TODO And the Terms and Conditions Switch should always be accepted
-class _AuthPageState extends State<AuthPage> {
+class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
@@ -65,7 +66,7 @@ class _AuthPageState extends State<AuthPage> {
       validator: (String password) {
         if (password.trim().isEmpty) {
           return "Password is required ";
-        } else if (password.length < 6) {
+        } else if (password.length < 8) {
           return "Password is too short";
         }
       },
@@ -84,16 +85,13 @@ class _AuthPageState extends State<AuthPage> {
       String email = _formData['email'];
       String password = _formData['password'];
       print("form data after inputed values are $_formData");
-      auth.loadingState(true);
       dynamic result = await auth.registerUser(email, password);
       // loading state
       if (result == null) {
         // registration was not successful
-        auth.loadingState(false);
-        showToast("Registration failed, check and try again");
+        showToast("Registration failed Email already exists");
         return;
       }
-      auth.loadingState(false);
       // Save user response to SharedPreferences
       String encodedUser = jsonEncode(result);
       SharedPreferenceHelper.saveString(USER, encodedUser);
@@ -104,7 +102,11 @@ class _AuthPageState extends State<AuthPage> {
 
   showToast(String message) {
     Fluttertoast.showToast(
-        msg: message, toastLength: Toast.LENGTH_LONG, backgroundColor: Colors.red, textColor: Colors.white, gravity: ToastGravity.BOTTOM);
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        gravity: ToastGravity.BOTTOM);
   }
 
   void getCurrentUser() async {
@@ -119,12 +121,12 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final auth = Provider.of<AuthProvider>(context);
 
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
 
-    return auth.loading
+    return auth.state == ViewState.Busy
         ? LoadingSpinner()
         : Scaffold(
             appBar: AppBar(
@@ -132,69 +134,65 @@ class _AuthPageState extends State<AuthPage> {
               centerTitle: true,
             ),
             body: Container(
-                /*Background image/cover for our Auth page*/
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/background_image.jpg'),
-                        fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                        width: targetWidth,
-                        child: Form(
-                          key: _formKey,
-                          child: Column(children: <Widget>[
-                            _buildEmailTextInput(),
-                            SizedBox(
-                              height: 18.0,
-                            ),
-                            _buildPasswordTextInput(),
-                            SwitchListTile(
-                              value: _acceptTerms,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  _acceptTerms = value;
-                                  _formData["acceptTerms"] = value;
-                                });
-                              },
-                              title: Text('Accept Terms'),
-                            ),
-                            SizedBox(height: 20.0),
-                            SizedBox(
-                                width: 200.0,
-                                height: 40.0,
-                                child: RaisedButton(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                  textColor: Colors.white,
-                                  color: Theme.of(context).accentColor,
-                                  child: Text('Register'),
-                                  onPressed: () => registerUser(auth),
-                                )),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(
-                              'OR',
-                              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            SizedBox(
-                                width: 200.0,
-                                height: 40.0,
-                                child: RaisedButton(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                  textColor: Colors.white,
-                                  color: Theme.of(context).accentColor,
-                                  child: Text('Log in'),
-                                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
-                                )),
-                          ]),
-                        )),
-                  ),
-                )));
+              /*Background image/cover for our Auth page*/
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/images/background_image.jpg'),
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
+              padding: EdgeInsets.all(12.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Container(
+                      width: targetWidth,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(children: <Widget>[
+                          _buildEmailTextInput(),
+                          SizedBox(height: 18.0),
+                          _buildPasswordTextInput(),
+                          SwitchListTile(
+                            value: _acceptTerms,
+                            onChanged: (bool value) {
+                              setState(() {
+                                _acceptTerms = value;
+                                _formData["acceptTerms"] = value;
+                              });
+                            },
+                            title: Text('Accept Terms'),
+                          ),
+                          SizedBox(height: 20.0),
+                          SizedBox(
+                              width: 200.0,
+                              height: 40.0,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                textColor: Colors.white,
+                                color: Theme.of(context).accentColor,
+                                child: Text('Register'),
+                                onPressed: () => registerUser(auth),
+                              )),
+                          SizedBox(height: 10.0),
+                          Text(
+                            'OR',
+                            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8.0),
+                          SizedBox(
+                              width: 200.0,
+                              height: 40.0,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                textColor: Colors.white,
+                                color: Theme.of(context).accentColor,
+                                child: Text('Log in'),
+                                onPressed: () => Navigator.pushNamed(context, '/login'),
+                              )),
+                        ]),
+                      )),
+                ),
+              ),
+            ),
+          );
   }
 }

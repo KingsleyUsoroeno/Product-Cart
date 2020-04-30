@@ -66,8 +66,8 @@ class ManageProductPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: <Widget>[
-              CreateProduct(),
-              MyProductsPage(),
+              CreateProductScreen(),
+              AllProductsScreen(),
             ],
           ),
         ));

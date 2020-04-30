@@ -7,9 +7,9 @@ class LoadingSpinner extends StatelessWidget {
     return Container(
       color: Colors.brown[100],
       child: Center(
-        child: SpinKitFadingCircle(
-          color: Colors.brown,
-          size: 50.0,
+        child: SpinKitDoubleBounce(
+          color: Theme.of(context).primaryColor,
+          size: 100.0,
         ),
       ),
     );

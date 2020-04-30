@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/productPojo.dart';
 import 'package:flutter_course/models/user.dart';
-import 'package:flutter_course/scoped_models/auth_model.dart';
-import 'package:flutter_course/scoped_models/product_provider.dart';
+import 'package:flutter_course/provider_models/auth_model.dart';
+import 'package:flutter_course/provider_models/product_model.dart';
+import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/widget/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-class CreateProduct extends StatefulWidget {
+class CreateProductScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ProductCreateOrEditState();
+    return CreateProductScreenState();
   }
 }
 
-class ProductCreateOrEditState extends State<CreateProduct> {
+class CreateProductScreenState extends State<CreateProductScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Map<String, dynamic> _formData = {"productName": "", "productDesription": "", "productPrice": 10, "image": "assets/images/food.jpg"};
+  final Map<String, dynamic> _formData = {
+    "productName": "",
+    "productDesription": "",
+    "productPrice": 10,
+    "image": "assets/images/food.jpg"
+  };
 
   void _showModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -51,7 +57,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
-          return 'Please Provide Product Description ';
+          return 'Please Provide a Product Description ';
         }
       },
       onSaved: (String val) {
@@ -67,7 +73,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
-          return 'Please state price';
+          return 'Please state a price';
         }
       },
       onSaved: (String val) {
@@ -76,7 +82,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
     );
   }
 
-  void _editProduct(ProductProvider productProvider, AuthProvider authProvider) async {
+  void _saveProduct(ProductModel productProvider, AuthProvider authProvider) async {
     /** Form Validation*/
     if (_formKey.currentState.validate()) {
       // these simply means that if all validation logic is okay go ahead and save the inputs
@@ -91,7 +97,7 @@ class ProductCreateOrEditState extends State<CreateProduct> {
       String userId = currentUser.id;
       String email = currentUser.email;
 
-      ProductPoJo newProduct = ProductPoJo(
+      Product newProduct = Product(
           id: new Uuid().v1().toString(),
           productName: productName,
           productDesc: productDes,
@@ -100,17 +106,17 @@ class ProductCreateOrEditState extends State<CreateProduct> {
           userId: userId,
           userEmail: email);
       await productProvider.addProduct(newProduct);
-      //Navigator.pushReplacementNamed(context, "/home");
+      Navigator.pushReplacementNamed(context, "/home");
     }
   }
 
-  Widget _buildSubmitButton(ProductProvider provider, AuthProvider authProvider) {
+  Widget _buildSubmitButton(ProductModel provider, AuthProvider authProvider) {
     return RaisedButton(
       textColor: Colors.white,
       color: Theme.of(context).primaryColor,
       child: Text('Save Product'),
       onPressed: () {
-        _editProduct(provider, authProvider);
+        _saveProduct(provider, authProvider);
       },
     );
   }
@@ -118,26 +124,29 @@ class ProductCreateOrEditState extends State<CreateProduct> {
   // TODO create a custom textInput Widget that can be reUsed
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
+    final productProvider = Provider.of<ProductModel>(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     final Widget pageContent = GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: Container(
-            margin: EdgeInsets.all(12.0),
-            child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    _buildTitleTextField(),
-                    _buildDescTextField(),
-                    _buildPriceTextField(),
-                    Container(margin: EdgeInsets.only(top: 15.0), child: _buildSubmitButton(productProvider, authProvider))
-                  ],
-                ))));
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        margin: EdgeInsets.all(12.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              _buildTitleTextField(),
+              _buildDescTextField(),
+              _buildPriceTextField(),
+              Container(margin: EdgeInsets.only(top: 15.0), child: _buildSubmitButton(productProvider, authProvider))
+            ],
+          ),
+        ),
+      ),
+    );
 
-    return productProvider.loading ? LoadingSpinner() : Scaffold(body: pageContent);
+    return productProvider.state == ViewState.Busy ? LoadingSpinner() : Scaffold(body: pageContent);
   }
 }
