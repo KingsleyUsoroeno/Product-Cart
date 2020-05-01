@@ -16,8 +16,8 @@ class ProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartModel>(context);
-    final productProvider = Provider.of<ProductModel>(context);
+    final cartProvider = Provider.of<CartViewModel>(context);
+    final productProvider = Provider.of<ProductViewModel>(context);
 
     return cartProvider.state == ViewState.Idle
         ? ListView.builder(
@@ -37,15 +37,12 @@ class ProductsList extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             /*Our ProductName*/
-                            Text(
-                              product.productName,
-                              style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'SourceCode'),
-                            ),
-                            SizedBox(
-                              width: 8.0,
-                            ),
+                            Text(product.productName,
+                                style:
+                                TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'SourceCode')),
+                            SizedBox(width: 8.0),
                             /*Our Product Price Tag widget*/
-                            PriceTag("\$${product.productPrice}."),
+                            PriceTag("\$${product.productPrice}"),
                           ],
                         )),
                     /** Location textView*/
@@ -81,6 +78,7 @@ class ProductsList extends StatelessWidget {
                           color: Colors.red,
                           onPressed: () {
                             debugPrint("Add products to cart called");
+                            // TODO before adding product to cart we need to check if product isn't already in cart
                             cartProvider.addProductToCart(product);
                           },
                         ),

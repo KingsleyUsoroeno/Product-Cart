@@ -82,7 +82,7 @@ class CreateProductScreenState extends State<CreateProductScreen> {
     );
   }
 
-  void _saveProduct(ProductModel productProvider, AuthProvider authProvider) async {
+  void _saveProduct(ProductViewModel productProvider, AuthenticationViewModel authProvider) async {
     /** Form Validation*/
     if (_formKey.currentState.validate()) {
       // these simply means that if all validation logic is okay go ahead and save the inputs
@@ -98,7 +98,7 @@ class CreateProductScreenState extends State<CreateProductScreen> {
       String email = currentUser.email;
 
       Product newProduct = Product(
-          id: new Uuid().v1().toString(),
+          productId: new Uuid().v1().toString(),
           productName: productName,
           productDesc: productDes,
           productImage: image,
@@ -110,7 +110,7 @@ class CreateProductScreenState extends State<CreateProductScreen> {
     }
   }
 
-  Widget _buildSubmitButton(ProductModel provider, AuthProvider authProvider) {
+  Widget _buildSubmitButton(ProductViewModel provider, AuthenticationViewModel authProvider) {
     return RaisedButton(
       textColor: Colors.white,
       color: Theme.of(context).primaryColor,
@@ -124,8 +124,8 @@ class CreateProductScreenState extends State<CreateProductScreen> {
   // TODO create a custom textInput Widget that can be reUsed
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductModel>(context);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final productProvider = Provider.of<ProductViewModel>(context);
+    final authProvider = Provider.of<AuthenticationViewModel>(context, listen: false);
 
     final Widget pageContent = GestureDetector(
       onTap: () {

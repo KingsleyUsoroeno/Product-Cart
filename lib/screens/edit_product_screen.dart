@@ -28,16 +28,6 @@ class EditProductScreenState extends State<EditProductScreen> {
     "image": "assets/images/food.jpg"
   };
 
-  void _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Center(
-            child: Text('These is a modal '),
-          );
-        });
-  }
-
   Widget _buildTitleTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Name'),
@@ -63,7 +53,7 @@ class EditProductScreenState extends State<EditProductScreen> {
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
-          return 'Please Provide Product Description ';
+          return 'Please Provide a product description ';
         }
       },
       onSaved: (String val) {
@@ -80,7 +70,7 @@ class EditProductScreenState extends State<EditProductScreen> {
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
-          return 'Please state price';
+          return 'Please state a price';
         }
       },
       onSaved: (String val) {
@@ -89,38 +79,39 @@ class EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
-  void _editProduct(ProductModel provider, AuthProvider authProvider) async {
+  void _editProduct(ProductViewModel provider, AuthenticationViewModel authProvider) async {
     /** Form Validation*/
     if (_formKey.currentState.validate()) {
       // these simply means that if all validation logic is okay go ahead and save the inputs
       print('Saving input');
       _formKey.currentState.save();
-      // only create a new product if we don't have a product to edit
-      if (widget.productToEdit == null) {
-        String productName = _formData["productName"];
-        String productDes = _formData["productDesription"];
-        double productPrice = _formData["productPrice"];
-        String image = _formData["image"];
-        User currentUser = await authProvider.getCurrentUser("user");
-        String userId = currentUser.id;
-        String email = currentUser.email;
+      String productName = _formData["productName"];
+      String productDes = _formData["productDesription"];
+      double productPrice = _formData["productPrice"];
+      String image = _formData["image"];
+      User currentUser = await authProvider.getCurrentUser("user");
+      String userId = currentUser.id;
+      String email = currentUser.email;
 
-        Product newProduct = Product(
-            id: new Uuid().v1().toString(),
-            productName: productName,
-            productDesc: productDes,
-            productImage: image,
-            productPrice: productPrice,
-            userId: userId,
-            userEmail: email);
+      Product newProduct = Product(
+          productId: new Uuid().v1().toString(),
+          isFavourite: true,
+          productName: productName,
+          productDesc: productDes,
+          productImage: image,
+          productPrice: productPrice,
+          userId: userId,
+          userEmail: email);
 
-        provider.updateProduct(newProduct, widget.productToEdit.id);
-      }
-      //Navigator.pushReplacementNamed(context, "/home");
+      debugPrint("product to edit $newProduct");
+      debugPrint("product to edit id is  ${widget.productToEdit.id}");
+
+      provider.updateProduct(newProduct, widget.productToEdit.id);
     }
+    Navigator.pushReplacementNamed(context, "/home");
   }
 
-  Widget _buildSubmitButton(ProductModel provider, AuthProvider authProvider) {
+  Widget _buildSubmitButton(ProductViewModel provider, AuthenticationViewModel authProvider) {
     return RaisedButton(
       textColor: Colors.white,
       color: Theme.of(context).primaryColor,
@@ -133,8 +124,9 @@ class EditProductScreenState extends State<EditProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final productProvider = Provider.of<ProductModel>(context, listen: false);
+    final authProvider = Provider.of<AuthenticationViewModel>(context, listen: false);
+    // tells authProvider not to listen for changes down here
+    final productProvider = Provider.of<ProductViewModel>(context);
     final Widget pageContent = GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());

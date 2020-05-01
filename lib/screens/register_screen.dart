@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
-import 'package:flutter_course/models/user.dart';
 import 'package:flutter_course/provider_models/auth_model.dart';
 import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/widget/loading.dart';
@@ -16,18 +15,15 @@ class RegisterScreen extends StatefulWidget {
   }
 }
 
-// TODO Implement a Default Login feature whereBy the email and password field should never be null
-// TODO And the Terms and Conditions Switch should always be accepted
 class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _acceptTerms = false;
-  static String USER = "user";
+  static final String USER = "user";
 
   final Map<String, dynamic> _formData = {"email": "", "password": "", "acceptTerms": false};
 
@@ -73,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  registerUser(AuthProvider auth) async {
+  registerUser(AuthenticationViewModel auth) async {
     if (_formKey.currentState.validate()) {
       print("Validating user input");
       if (_formData["acceptTerms"] == false) {
@@ -109,19 +105,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         gravity: ToastGravity.BOTTOM);
   }
 
-  void getCurrentUser() async {
-    String userString = await SharedPreferenceHelper.getString(USER);
-    if (userString.isEmpty) {
-      return;
-    }
-    User user = User.fromJson(jsonDecode(userString));
-    print("User is $user");
-    Navigator.pushReplacementNamed(context, '/home');
-  }
-
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
+    final auth = Provider.of<AuthenticationViewModel>(context);
 
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
@@ -163,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           SizedBox(height: 20.0),
                           SizedBox(
-                              width: 200.0,
+                              width: deviceWidth,
                               height: 40.0,
                               child: RaisedButton(
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -172,14 +158,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: Text('Register'),
                                 onPressed: () => registerUser(auth),
                               )),
-                          SizedBox(height: 10.0),
+                          SizedBox(height: 20.0),
                           Text(
-                            'OR',
+                            'Already have an Account ?',
                             style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 8.0),
+                          SizedBox(height: 20.0),
                           SizedBox(
-                              width: 200.0,
+                              width: deviceWidth,
                               height: 40.0,
                               child: RaisedButton(
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),

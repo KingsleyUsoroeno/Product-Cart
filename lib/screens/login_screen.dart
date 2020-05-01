@@ -67,13 +67,13 @@ class _LoginScreenState extends State<LoginScreen> {
         if (password.trim().isEmpty) {
           return "Password is required ";
         } else if (password.length < 6) {
-          return "Password is too short";
+          return "Password should be greater than 6 characters";
         }
       },
     );
   }
 
-  loginUser(AuthProvider authProvider) async {
+  loginUser(AuthenticationViewModel authProvider) async {
     if (_formKey.currentState.validate()) {
       print("Validating user input");
       if (_formData["acceptTerms"] == false) {
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final auth = Provider.of<AuthenticationViewModel>(context);
 
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
@@ -165,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             SizedBox(height: 20.0),
                             SizedBox(
-                                width: 200.0,
+                                width: deviceWidth,
                                 height: 40.0,
                                 child: RaisedButton(
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -174,16 +174,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text('Login'),
                                   onPressed: () => loginUser(auth),
                                 )),
-                            SizedBox(height: 10.0),
+                            SizedBox(height: 20.0),
                             Text(
-                              'OR',
+                              'Dont have an Account ?',
                               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                             ),
+                            SizedBox(height: 20.0),
                             SizedBox(
-                              height: 8.0,
-                            ),
-                            SizedBox(
-                                width: 200.0,
+                                width: deviceWidth,
                                 height: 40.0,
                                 child: RaisedButton(
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),

@@ -8,7 +8,7 @@ import 'package:flutter_course/models/user.dart';
 import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AuthProvider with ChangeNotifier {
+class AuthenticationViewModel with ChangeNotifier {
   User _authenticatedUser;
 
   ViewState _state = ViewState.Idle;

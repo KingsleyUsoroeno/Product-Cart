@@ -39,28 +39,35 @@ class AllProductsScreenState extends State<AllProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductModel>(context);
+    final productProvider = Provider.of<ProductViewModel>(context);
     List<Product> products;
     return StreamBuilder(
       stream: productProvider.fetchProductsAsStream(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingSpinner();
+        } else if (!snapshot.hasData) {
+          return Center(child: Text("You have not created any products"));
         } else if (snapshot.hasData) {
           products = snapshot.data.documents
               .map((doc) => Product.fromJson(doc.data, doc.documentID))
-              .toList()
               .where((product) => product.userEmail == loggedInUser.email)
               .toList();
-          return _buildProduct(products, productProvider);
+          if (products == null || products.isEmpty) {
+            return Center(
+                child: Text("You have not created any products",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)));
+          } else {
+            return _buildProduct(products, productProvider);
+          }
         } else {
-          return Center(child: Text("You have not created any products"));
+          return Container();
         }
       },
     );
   }
 
-  Widget _buildProduct(List<Product> products, ProductModel productModel) {
+  Widget _buildProduct(List<Product> products, ProductViewModel productModel) {
     return productModel.state == ViewState.Idle
         ? ListView.builder(
             itemCount: products.length,

@@ -5,7 +5,7 @@ class LoadingSpinner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.brown[100],
+      color: Colors.white,
       child: Center(
         child: SpinKitDoubleBounce(
           color: Theme.of(context).primaryColor,

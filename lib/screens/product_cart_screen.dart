@@ -38,7 +38,7 @@ class ProductCartScreenState extends State<ProductCartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartModel>(context);
+    final cartProvider = Provider.of<CartViewModel>(context);
     List<Product> products;
     return Scaffold(
       appBar: AppBar(
@@ -49,33 +49,20 @@ class ProductCartScreenState extends State<ProductCartScreen> {
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return LoadingSpinner();
-          }
-          if (!snapshot.hasData) {
-            return Center(child: Text("You have not created any products"));
-          }
-
-          if (snapshot.hasData) {
+          } else if (!snapshot.hasData) {
+            return Center(child: Text("You have not added any products to cart"));
+          } else if (snapshot.hasData) {
             products = snapshot.data.documents
                 .map((doc) => Product.fromJson(doc.data, doc.documentID))
-                .toList()
                 .where((product) => product.userEmail == loggedInUser.email)
                 .toList();
-            return _buildProduct(products, cartProvider);
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-                child: Column(
-              children: <Widget>[
-                Text(
-                  "Could fetch your products",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                Text("Please check your internet connection and try again",
-                    style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-              ],
-            ));
+            if (products == null || products.isEmpty) {
+              return Center(
+                  child: Text("You have not added any product to cart",
+                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)));
+            } else {
+              return _buildProduct(products, cartProvider);
+            }
           } else {
             return Container();
           }
@@ -84,7 +71,7 @@ class ProductCartScreenState extends State<ProductCartScreen> {
     );
   }
 
-  Widget _buildProduct(List<Product> products, CartModel cartModel) {
+  Widget _buildProduct(List<Product> products, CartViewModel cartModel) {
     return cartModel.state == ViewState.Idle
         ? ListView.builder(
             itemCount: products.length,
@@ -100,8 +87,7 @@ class ProductCartScreenState extends State<ProductCartScreen> {
                         radius: 30.0,
                       ),
                       subtitle: Text(product.productDesc),
-                      contentPadding: EdgeInsets.all(8.0),
-                      onTap: (() => Navigator.pushNamed(context, "/products", arguments: product))),
+                      contentPadding: EdgeInsets.all(8.0)),
                   Divider()
                 ],
               );

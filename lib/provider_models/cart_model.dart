@@ -6,7 +6,7 @@ import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/service/api.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class CartModel with ChangeNotifier {
+class CartViewModel with ChangeNotifier {
   final _api = Api(path: "cart");
 
   List<Product> products;
@@ -51,6 +51,10 @@ class CartModel with ChangeNotifier {
       debugPrint("Caught an exception delete a product $e");
       setState(ViewState.Idle);
     }
+  }
+
+  bool doesProductAlreadyExistInCart(List<Product> products, Product product) {
+    return products.contains(product);
   }
 
   showToast(String message) {

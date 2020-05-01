@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final user = await _auth.currentUser();
       if (user != null) {
-        debugPrint("user email is ${user.email}");
+        debugPrint("user email is nnn ${user.email}");
         loggedInUser = user;
       }
     } catch (e) {
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductModel>(context);
+    final productProvider = Provider.of<ProductViewModel>(context);
     List<Product> products;
     return Scaffold(
       drawer: Drawer(
@@ -86,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Theme.of(context).primaryColor,
                 size: 20.0,
               ),
+              onTap: () => debugPrint("log out was clicked"),
             ),
           ],
         ),
@@ -108,18 +109,20 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return LoadingSpinner();
-          }
-          if (!snapshot.hasData) {
+          } else if (!snapshot.hasData) {
             return Center(child: Text("You have not created any products"));
-          }
-
-          if (snapshot.hasData) {
+          } else if (snapshot.hasData) {
             products = snapshot.data.documents
                 .map((doc) => Product.fromJson(doc.data, doc.documentID))
-                .toList()
                 .where((product) => product.userEmail == loggedInUser.email)
                 .toList();
-            return ProductsList(products: products);
+            if (products == null || products.isEmpty) {
+              return Center(
+                  child: Text("You have not created any products",
+                      style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)));
+            } else {
+              return ProductsList(products: products);
+            }
           } else {
             return Container();
           }

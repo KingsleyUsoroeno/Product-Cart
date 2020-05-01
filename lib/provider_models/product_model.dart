@@ -7,14 +7,14 @@ import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/service/api.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class ProductModel with ChangeNotifier {
+class ProductViewModel with ChangeNotifier {
   final _api = Api(path: "products");
   FirebaseUser _firebaseUser;
   final _auth = FirebaseAuth.instance;
 
   FirebaseUser get firebaseUser => _firebaseUser;
 
-  ProductModel() {
+  ProductViewModel() {
     getCurrentUser();
   }
 
@@ -77,7 +77,7 @@ class ProductModel with ChangeNotifier {
     try {
       setState(ViewState.Busy);
       final result = await _api.addDocument(data.toJson());
-      debugPrint("result is $result");
+      debugPrint("result is ${result.documentID}");
       setState(ViewState.Idle);
       showToast("Product added successfully");
       return;
