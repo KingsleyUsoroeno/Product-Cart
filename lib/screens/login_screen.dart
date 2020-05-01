@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_course/local/sharedpreferences.dart';
-import 'package:flutter_course/models/user.dart';
 import 'package:flutter_course/provider_models/auth_model.dart';
 import 'package:flutter_course/provider_models/view_state.dart';
 import 'package:flutter_course/widget/loading.dart';
@@ -16,15 +15,7 @@ class LoginScreen extends StatefulWidget {
   }
 }
 
-// TODO Implement a Default Login feature whereBy the email and password field should never be null
-// TODO And the Terms and Conditions Switch should always be accepted
 class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-  }
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _acceptTerms = false;
   static String USER = "user";
@@ -39,6 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
       onSaved: (String email) {
         _formData["email"] = email;
       },
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       // ignore: missing_return
       validator: (String email) {
         // validates whether these email field is empty or is a valid email
@@ -53,12 +46,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordTextInput() {
+  Widget _buildPasswordTextInput(AuthenticationViewModel viewModel) {
     return TextFormField(
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white),
+      decoration: InputDecoration(
+          labelText: 'Password',
+          filled: true,
+          fillColor: Colors.white,
+          suffixIcon: IconButton(
+            icon: viewModel.obscuredText ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
+            onPressed: () => viewModel.togglePasswordVisibility(),
+          )),
       textInputAction: TextInputAction.done,
-      obscureText: true,
+      obscureText: viewModel.obscuredText,
       onSaved: (String password) {
         _formData["password"] = password;
       },
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // loading state
       if (result == null) {
         // registration was not successful
-        showToast("Login failed,Please check your credentials and try again");
+        showToast("Login failed please check your credentials and try again");
         return;
       }
       // Save user response to SharedPreferences
@@ -109,16 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
         gravity: ToastGravity.BOTTOM);
   }
 
-  void getCurrentUser() async {
-    String userString = await SharedPreferenceHelper.getString(USER);
-    if (userString.isEmpty) {
-      return;
-    }
-    User user = User.fromJson(jsonDecode(userString));
-    print("User is $user");
-    Navigator.pushReplacementNamed(context, '/home');
-  }
-
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthenticationViewModel>(context);
@@ -129,17 +119,15 @@ class _LoginScreenState extends State<LoginScreen> {
     return auth.state == ViewState.Busy
         ? LoadingSpinner()
         : Scaffold(
-            appBar: AppBar(
-              title: Text('Login'),
-              centerTitle: true,
-            ),
+            appBar: AppBar(title: Text('Login')),
             body: Container(
                 /*Background image/cover for our Auth page*/
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage('assets/images/background_image.jpg'),
                         fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
+                        colorFilter:
+                            ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
                 padding: EdgeInsets.all(12.0),
                 child: Center(
                   child: SingleChildScrollView(
@@ -152,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: 18.0,
                             ),
-                            _buildPasswordTextInput(),
+                            _buildPasswordTextInput(auth),
                             SwitchListTile(
                               value: _acceptTerms,
                               onChanged: (bool value) {
@@ -168,7 +156,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: deviceWidth,
                                 height: 40.0,
                                 child: RaisedButton(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0)),
                                   textColor: Colors.white,
                                   color: Theme.of(context).accentColor,
                                   child: Text('Login'),
@@ -184,11 +173,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: deviceWidth,
                                 height: 40.0,
                                 child: RaisedButton(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0)),
                                   textColor: Colors.white,
                                   color: Theme.of(context).accentColor,
                                   child: Text('Register'),
-                                  onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
+                                  onPressed: () =>
+                                      Navigator.pushReplacementNamed(context, '/register'),
                                 )),
                           ]),
                         )),

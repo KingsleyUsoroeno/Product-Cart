@@ -43,6 +43,8 @@ class CreateProductScreenState extends State<CreateProductScreen> {
           return 'Product name is required';
         }
       },
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       onSaved: (String val) {
         _formData['productName'] = val;
       },
@@ -57,9 +59,14 @@ class CreateProductScreenState extends State<CreateProductScreen> {
       // ignore: missing_return
       validator: (String input) {
         if (input.trim().isEmpty) {
-          return 'Please Provide a Product Description ';
+          return 'Please provide a product description ';
+        }
+        if (input.trim().length < 10) {
+          return 'product description should be more than 10 characters';
         }
       },
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       onSaved: (String val) {
         _formData['productDesription'] = val;
       },
@@ -140,7 +147,9 @@ class CreateProductScreenState extends State<CreateProductScreen> {
               _buildTitleTextField(),
               _buildDescTextField(),
               _buildPriceTextField(),
-              Container(margin: EdgeInsets.only(top: 15.0), child: _buildSubmitButton(productProvider, authProvider))
+              Container(
+                  margin: EdgeInsets.only(top: 15.0),
+                  child: _buildSubmitButton(productProvider, authProvider))
             ],
           ),
         ),

@@ -39,7 +39,7 @@ class ProductsList extends StatelessWidget {
                             /*Our ProductName*/
                             Text(product.productName,
                                 style:
-                                TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'SourceCode')),
+                                    TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'SourceCode')),
                             SizedBox(width: 8.0),
                             /*Our Product Price Tag widget*/
                             PriceTag("\$${product.productPrice}"),
