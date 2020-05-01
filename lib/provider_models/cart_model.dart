@@ -61,7 +61,7 @@ class CartViewModel with ChangeNotifier {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.green,
         textColor: Colors.white,
         gravity: ToastGravity.BOTTOM);
   }

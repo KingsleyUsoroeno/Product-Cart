@@ -53,12 +53,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordTextInput() {
+  Widget _buildPasswordTextInput(AuthenticationViewModel viewModel) {
     return TextFormField(
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white),
+      decoration: InputDecoration(
+          labelText: 'Password',
+          filled: true,
+          fillColor: Colors.white,
+          suffixIcon: IconButton(
+            icon: viewModel.obscuredText ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
+            onPressed: () => viewModel.togglePasswordVisibility(),
+          )),
       textInputAction: TextInputAction.done,
-      obscureText: true,
+      obscureText: viewModel.obscuredText,
       onSaved: (String password) {
         _formData["password"] = password;
       },
@@ -152,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: 18.0,
                             ),
-                            _buildPasswordTextInput(),
+                            _buildPasswordTextInput(auth),
                             SwitchListTile(
                               value: _acceptTerms,
                               onChanged: (bool value) {

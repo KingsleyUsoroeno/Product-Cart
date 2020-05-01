@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       appBar: AppBar(
-        title: Text('EasyList'),
+        title: Text('Product Cart'),
         elevation: 9.0,
         actions: <Widget>[
           IconButton(

@@ -35,6 +35,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onSaved: (String email) {
         _formData["email"] = email;
       },
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       // ignore: missing_return
       validator: (String email) {
         // validates whether these email field is empty or is a valid email
@@ -49,12 +51,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildPasswordTextInput() {
+  Widget _buildPasswordTextInput(AuthenticationViewModel viewModel) {
     return TextFormField(
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white),
+      decoration: InputDecoration(
+          labelText: 'Password',
+          filled: true,
+          fillColor: Colors.white,
+          suffixIcon: IconButton(
+            icon: viewModel.obscuredText ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
+            onPressed: () => viewModel.togglePasswordVisibility(),
+          )),
       textInputAction: TextInputAction.done,
-      obscureText: true,
+      obscureText: viewModel.obscuredText,
       onSaved: (String password) {
         _formData["password"] = password;
       },
@@ -136,7 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(children: <Widget>[
                           _buildEmailTextInput(),
                           SizedBox(height: 18.0),
-                          _buildPasswordTextInput(),
+                          _buildPasswordTextInput(auth),
                           SwitchListTile(
                             value: _acceptTerms,
                             onChanged: (bool value) {
