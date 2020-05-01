@@ -35,6 +35,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onSaved: (String email) {
         _formData["email"] = email;
       },
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       // ignore: missing_return
       validator: (String email) {
         // validates whether these email field is empty or is a valid email
@@ -49,12 +51,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildPasswordTextInput() {
+  Widget _buildPasswordTextInput(AuthenticationViewModel viewModel) {
     return TextFormField(
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white),
+      decoration: InputDecoration(
+          labelText: 'Password',
+          filled: true,
+          fillColor: Colors.white,
+          suffixIcon: IconButton(
+            icon: viewModel.obscuredText ? Icon(Icons.visibility_off) : Icon(Icons.visibility),
+            onPressed: () => viewModel.togglePasswordVisibility(),
+          )),
       textInputAction: TextInputAction.done,
-      obscureText: true,
+      obscureText: viewModel.obscuredText,
       onSaved: (String password) {
         _formData["password"] = password;
       },
@@ -115,17 +124,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return auth.state == ViewState.Busy
         ? LoadingSpinner()
         : Scaffold(
-            appBar: AppBar(
-              title: Text('Register'),
-              centerTitle: true,
-            ),
+            appBar: AppBar(title: Text('Register')),
             body: Container(
               /*Background image/cover for our Auth page*/
               decoration: BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage('assets/images/background_image.jpg'),
                       fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
+                      colorFilter:
+                          ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstATop))),
               padding: EdgeInsets.all(12.0),
               child: Center(
                 child: SingleChildScrollView(
@@ -136,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(children: <Widget>[
                           _buildEmailTextInput(),
                           SizedBox(height: 18.0),
-                          _buildPasswordTextInput(),
+                          _buildPasswordTextInput(auth),
                           SwitchListTile(
                             value: _acceptTerms,
                             onChanged: (bool value) {
@@ -152,7 +159,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               width: deviceWidth,
                               height: 40.0,
                               child: RaisedButton(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0)),
                                 textColor: Colors.white,
                                 color: Theme.of(context).accentColor,
                                 child: Text('Register'),
@@ -168,7 +176,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               width: deviceWidth,
                               height: 40.0,
                               child: RaisedButton(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0)),
                                 textColor: Colors.white,
                                 color: Theme.of(context).accentColor,
                                 child: Text('Log in'),

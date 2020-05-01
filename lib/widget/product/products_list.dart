@@ -38,8 +38,10 @@ class ProductsList extends StatelessWidget {
                           children: <Widget>[
                             /*Our ProductName*/
                             Text(product.productName,
-                                style:
-                                TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, fontFamily: 'SourceCode')),
+                                style: TextStyle(
+                                    fontSize: 26.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'SourceCode')),
                             SizedBox(width: 8.0),
                             /*Our Product Price Tag widget*/
                             PriceTag("\$${product.productPrice}"),
@@ -48,7 +50,7 @@ class ProductsList extends StatelessWidget {
                     /** Location textView*/
                     Container(
                       padding: EdgeInsets.all(4.0),
-                      child: Text('These is going to be the location'),
+                      child: Text('These is going to be the product location'),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey, width: 1.0),
                         borderRadius: BorderRadius.circular(6.0),
@@ -61,7 +63,8 @@ class ProductsList extends StatelessWidget {
                         IconButton(
                           onPressed: () {
                             //productProvider.setSelectedProductIndex(pos);
-                            Navigator.pushNamed<bool>(context, "/products", arguments: product).then((bool value) {
+                            Navigator.pushNamed<bool>(context, "/products", arguments: product)
+                                .then((bool value) {
                               if (value == false) {
                                 return;
                               }

@@ -28,6 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  _logoutUser() {
+    _auth.signOut();
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,16 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/profile_img.png'),
+                      backgroundImage: AssetImage('assets/images/user_placeholder_image.png'),
                       maxRadius: 60.0,
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      'Kingsley Usoro',
-                      style: TextStyle(color: Colors.white, fontSize: 18.0),
-                    )
                   ],
                 ),
               ),
@@ -86,13 +84,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Theme.of(context).primaryColor,
                 size: 20.0,
               ),
-              onTap: () => debugPrint("log out was clicked"),
+              onTap: () => _logoutUser(),
             ),
           ],
         ),
       ),
       appBar: AppBar(
-        title: Text('EasyList'),
+        title: Text('Product Cart'),
         elevation: 9.0,
         actions: <Widget>[
           IconButton(
