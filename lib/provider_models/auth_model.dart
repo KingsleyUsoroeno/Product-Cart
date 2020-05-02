@@ -15,17 +15,8 @@ class AuthenticationViewModel with ChangeNotifier {
 
   ViewState get state => _state;
 
-  bool _obscuredText = true;
-
-  bool get obscuredText => _obscuredText;
-
   setState(ViewState state) {
     _state = state;
-    notifyListeners();
-  }
-
-  void togglePasswordVisibility() {
-    _obscuredText = !_obscuredText;
     notifyListeners();
   }
 
@@ -85,7 +76,7 @@ class AuthenticationViewModel with ChangeNotifier {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.red,
         textColor: Colors.white,
         gravity: ToastGravity.BOTTOM);
   }

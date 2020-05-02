@@ -43,8 +43,6 @@ class CreateProductScreenState extends State<CreateProductScreen> {
           return 'Product name is required';
         }
       },
-      textInputAction: TextInputAction.next,
-      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       onSaved: (String val) {
         _formData['productName'] = val;
       },
@@ -62,8 +60,6 @@ class CreateProductScreenState extends State<CreateProductScreen> {
           return 'Please Provide a Product Description ';
         }
       },
-      textInputAction: TextInputAction.next,
-      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       onSaved: (String val) {
         _formData['productDesription'] = val;
       },

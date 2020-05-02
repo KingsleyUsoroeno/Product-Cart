@@ -16,20 +16,22 @@ class OnBoardingScreen extends StatelessWidget {
     return PageViewIndicator(
       pageIndexNotifier: pageIndexNotifier,
       length: length,
-      normalBuilder: (animationController, index) => Circle(
-        size: 8.0,
-        color: Colors.black87,
-      ),
-      highlightedBuilder: (animationController, index) => ScaleTransition(
-        scale: CurvedAnimation(
-          parent: animationController,
-          curve: Curves.ease,
-        ),
-        child: Circle(
-          size: 8.0,
-          color: Colors.white,
-        ),
-      ),
+      normalBuilder: (animationController, index) =>
+          Circle(
+            size: 8.0,
+            color: Colors.black87,
+          ),
+      highlightedBuilder: (animationController, index) =>
+          ScaleTransition(
+            scale: CurvedAnimation(
+              parent: animationController,
+              curve: Curves.ease,
+            ),
+            child: Circle(
+              size: 8.0,
+              color: Colors.white,
+            ),
+          ),
     );
   }
 

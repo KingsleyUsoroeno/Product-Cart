@@ -50,10 +50,10 @@ class ProductPage extends StatelessWidget {
                   children: <Widget>[
                     /*Our Products Image*/
                     Image.asset(_product.productImage),
+
                     /*Our Product Description embedded into a Container Widget*/
                     Container(
                       margin: EdgeInsets.only(top: 10.0),
-                      padding: EdgeInsets.all(10.0),
                       child: Text(_product.productDesc),
                     ),
                     RaisedButton(
