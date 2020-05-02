@@ -17,9 +17,8 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Setting Up
 
-Clone the project from [here](https://github.com/KingsleyUsoroeno/Product-Cart) or fork it if you would like to contribute to the project 
-open The Project in Android Studio 3.6.2 or Higher or visual studio code and running flutter packages get to install the projects dependencies or click on 
-the packages get when prompted by Android Studio to do so 
+- Clone the project from [here](https://github.com/KingsleyUsoroeno/Product-Cart) or fork it if you would like to contribute to the project.
+- open The Project in Android Studio 3.6.2 or Higher or visual studio code and run flutter packages get to install the projects  dependencies or click on the packages get when prompted by Android Studio to do so 
 
 The Project is grouped into different packages for keeping code concise and clean these packages includes
 - local - includes all our local data helper class such as sharedPreferences
@@ -32,5 +31,6 @@ The Project is grouped into different packages for keeping code concise and clea
 ## Please Note
 - The project was developed whilst using a Windows machine and as such firebase functionality for its IOS counterpart were not enable.
 - Every product created uses a static asset image as the products image to reduce app complexity.
+
 
 
