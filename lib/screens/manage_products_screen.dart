@@ -25,16 +25,10 @@ class ManageProductPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         CircleAvatar(
-                          backgroundImage: AssetImage('assets/images/profile_img.png'),
+                          backgroundImage: AssetImage('assets/images/user_placeholder_image.png'),
                           maxRadius: 60.0,
                         ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          'Kingsley Usoro',
-                          style: TextStyle(color: Colors.white, fontSize: 18.0),
-                        )
+                        SizedBox(height: 10.0),
                       ],
                     ),
                   ),

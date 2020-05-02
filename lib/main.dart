@@ -88,10 +88,10 @@ class MyAppState extends State<MyApp> {
               default:
                 return MaterialPageRoute(
                     builder: (BuildContext context) => Scaffold(
-                      body: Center(
-                        child: Text('No route defined for ${settings.name}'),
-                      ),
-                    ));
+                          body: Center(
+                            child: Text('No route defined for ${settings.name}'),
+                          ),
+                        ));
             }
           },
           home: widget.homeWidget),
